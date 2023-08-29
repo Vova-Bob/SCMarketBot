@@ -1,0 +1,3 @@
+sqlalchemy[asyncio]
+discord.py
+aiohttp
