@@ -2,6 +2,7 @@ import os
 
 import aiohttp
 import discord
+import traceback
 from discord import app_commands
 from discord.app_commands import checks
 from discord.ext import commands
@@ -45,7 +46,7 @@ class Registration(commands.Cog):
                 try:
                     result = await resp.json()
                 except Exception as e:
-                    print(e)
+                    traceback.print_exc()
                     return await interaction.response.send_message("An unexpected error occured", ephemeral=True)
 
         if resp.ok:
