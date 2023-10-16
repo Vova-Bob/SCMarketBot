@@ -50,10 +50,10 @@ class Registration(commands.Cog):
                 except Exception as e:
                     traceback.print_exc()
                     print(text)
-                    return await interaction.response.send_message("An unexpected error occured", ephemeral=True)
+                    return await interaction.response.send_message("An unexpected error occurred", ephemeral=True)
 
         if resp.ok:
-            await interaction.response.send_message("Registered channel", ephemeral=True)
+            await interaction.response.send_message(f"Registered {type}", ephemeral=True)
         else:
             await interaction.response.send_message(f"Failed to register channel: {result.get('error')}",
                                                     ephemeral=True)
