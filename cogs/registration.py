@@ -47,6 +47,7 @@ class Registration(commands.Cog):
                     result = await resp.json()
                 except Exception as e:
                     traceback.print_exc()
+                    print(result.read())
                     return await interaction.response.send_message("An unexpected error occured", ephemeral=True)
 
         if resp.ok:
