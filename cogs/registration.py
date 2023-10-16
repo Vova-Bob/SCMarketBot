@@ -1,3 +1,4 @@
+import json
 import os
 
 import aiohttp
@@ -44,10 +45,11 @@ class Registration(commands.Cog):
                     )
             ) as resp:
                 try:
-                    result = await resp.json()
+                    text = await resp.text()
+                    result = json.loads(text) # await resp.json()
                 except Exception as e:
                     traceback.print_exc()
-                    print(result.read())
+                    print(text)
                     return await interaction.response.send_message("An unexpected error occured", ephemeral=True)
 
         if resp.ok:
