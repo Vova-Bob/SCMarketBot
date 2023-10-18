@@ -22,14 +22,14 @@ class Registration(commands.GroupCog, name="register"):
             self, interaction: discord.Interaction,
             name: str
     ):
-        """Register a channel as the channel that will house threads for order fulfillment for your contractor."""
+        """Register a channel as the channel that will house threads for order fulfillment for your contractor. Make sure the bot has permission to see the channel and make private threads there."""
 
     @channel.command(name="user")
     @checks.has_permissions(administrator=True)
     async def user_channel(
             self, interaction: discord.Interaction,
     ):
-        """Register a channel as the channel that will house threads for order fulfillment for your user"""
+        """Register a channel as the channel that will house threads for order fulfillment for your user. Make sure the bot has permission to see the channel and make private threads there."""
 
     @server.command(name="contractor")
     @checks.has_permissions(administrator=True)
