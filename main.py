@@ -86,15 +86,18 @@ class SCMarket(Bot):
 
         invite = None
         if failed:
-            invite = await channel.create_invite(max_uses=len(failed))
-            for member in failed:
-                user = await self.fetch_user(int(member))
-                try:
-                    await user.send(
-                        f"You placed an order:\n\n```{order['description']}```\n\nPlease join this server to work with the seller to complete your order: {invite}"
-                    )
-                except:
-                    pass
+            try:
+                invite = await channel.create_invite(max_uses=len(failed))
+                for member in failed:
+                    user = await self.fetch_user(int(member))
+                    try:
+                        await user.send(
+                            f"You placed an order:\n\n```{order['description']}```\n\nPlease join this server to work with the seller to complete your order: {invite}"
+                        )
+                    except:
+                        pass
+            except:
+                pass
 
         return dict(thread_id=str(thread.id), failed=failed, invite_code=str(invite) if invite else None)
 
