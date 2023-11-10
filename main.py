@@ -68,7 +68,11 @@ class SCMarket(Bot):
             pass
 
         try:
-            invite = await self.fetch_invite(invite_code)
+            if invite_code:
+                invite = await self.fetch_invite(invite_code)
+            else:
+                invite = None
+                
             if invite:
                 return invite_code
             else:
