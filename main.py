@@ -38,7 +38,7 @@ class SCMarket(Bot):
             body.get('order'),
         )
 
-        if body.get('server_id'):
+        if body.get('server_id') and body.get('channel_id'):
             invite = await self.verify_invite(body.get('customer_discord_id'), body.get('server_id'),
                                               body.get('channel_id'), body.get("discord_invite"))
         else:
@@ -47,10 +47,15 @@ class SCMarket(Bot):
         return dict(thread=thread, invite_code=invite)
 
     async def verify_invite(self, customer_id, server_id, channel_id, invite_code):
-        guild = self.get_guild(server_id)
-        channel = self.get_channel(channel_id)
+        guild: discord.Guild = await self.fetch_guild(int(server_id))
+        if not guild:
+            return None
 
-        is_member = customer_id and guild.get_member(customer_id)
+        channel: discord.TextChannel = await guild.fetch_channel(int(channel_id))
+        if not channel:
+            return None
+
+        is_member = customer_id and guild.fetch_member(int(customer_id))
         if is_member:
             print("Yeeep, is member")
             return None
@@ -95,11 +100,11 @@ class SCMarket(Bot):
         if not server_id or not channel_id or not members:
             return
 
-        guild: discord.Guild = await self.fetch_guild(server_id)
+        guild: discord.Guild = await self.fetch_guild(int(server_id))
         if not guild:
             return
 
-        channel: discord.TextChannel = await guild.fetch_channel(channel_id)
+        channel: discord.TextChannel = await guild.fetch_channel(int(channel_id))
         if not channel:
             return
 
