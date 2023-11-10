@@ -39,7 +39,8 @@ class SCMarket(Bot):
         )
 
         if body.get('server_id'):
-            invite = self.verify_invite(body.get('customer_discord_id'), body.get('server_id'), body.get('channel_id'), body.get("discord_invite"))
+            invite = await self.verify_invite(body.get('customer_discord_id'), body.get('server_id'),
+                                              body.get('channel_id'), body.get("discord_invite"))
         else:
             invite = None
 
