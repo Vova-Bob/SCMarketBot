@@ -1,5 +1,6 @@
 import asyncio
 import os
+import traceback
 
 import aiohttp
 import discord
@@ -30,21 +31,24 @@ class SCMarket(Bot):
         pass
 
     async def order_placed(self, body):
-        print(body)
-        thread = await self.create_thread(
-            body.get('server_id'),
-            body.get('channel_id'),
-            body.get('members'),
-            body.get('order'),
-        )
+        try:
+            thread = await self.create_thread(
+                body.get('server_id'),
+                body.get('channel_id'),
+                body.get('members'),
+                body.get('order'),
+            )
 
-        if body.get('server_id') and body.get('channel_id'):
-            invite = await self.verify_invite(body.get('customer_discord_id'), body.get('server_id'),
-                                              body.get('channel_id'), body.get("discord_invite"))
-        else:
-            invite = None
+            if body.get('server_id') and body.get('channel_id'):
+                invite = await self.verify_invite(body.get('customer_discord_id'), body.get('server_id'),
+                                                  body.get('channel_id'), body.get("discord_invite"))
+            else:
+                invite = None
 
-        return dict(thread=thread, invite_code=invite)
+            return dict(thread=thread, invite_code=invite)
+        except:
+            traceback.print_exc()
+            return dict(thread=None, invite_code=None)
 
     async def verify_invite(self, customer_id, server_id, channel_id, invite_code):
         guild: discord.Guild = await self.fetch_guild(int(server_id))
@@ -55,10 +59,13 @@ class SCMarket(Bot):
         if not channel:
             return None
 
-        is_member = customer_id and await guild.fetch_member(int(customer_id))
-        if is_member:
-            print("Yeeep, is member")
-            return None
+        try:
+            is_member = customer_id and await guild.fetch_member(int(customer_id))
+            if is_member:
+                print("Yeeep, is member")
+                return None
+        except:
+            is_member = False
 
         try:
             invites = await channel.invites()
