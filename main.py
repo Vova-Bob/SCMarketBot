@@ -65,7 +65,7 @@ class SCMarket(Bot):
                 print("Yeeep, is member")
                 return None
         except:
-            is_member = False
+            pass
 
         try:
             invites = await channel.invites()
@@ -75,6 +75,7 @@ class SCMarket(Bot):
                 new_invite = await channel.create_invite(reason="Invite customer to the guild", unique=False)
                 return new_invite.code
         except:
+            traceback.print_exc()
             return None
 
     async def on_member_join(self, member):
