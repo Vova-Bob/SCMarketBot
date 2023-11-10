@@ -55,7 +55,7 @@ class SCMarket(Bot):
         if not channel:
             return None
 
-        is_member = customer_id and guild.fetch_member(int(customer_id))
+        is_member = customer_id and await guild.fetch_member(int(customer_id))
         if is_member:
             print("Yeeep, is member")
             return None
