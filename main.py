@@ -68,8 +68,8 @@ class SCMarket(Bot):
             pass
 
         try:
-            invites = await channel.invites()
-            if discord.utils.get(invites, code=invite_code):
+            invite = await self.fetch_invite(invite_code)
+            if invite:
                 return invite_code
             else:
                 new_invite = await channel.create_invite(reason="Invite customer to the guild", unique=False)
