@@ -10,12 +10,7 @@ def create_api(bot):
 
         return web.json_response(
             data=dict(
-                result=await bot.create_thread(
-                    body.get('server_id'),
-                    body.get('channel_id'),
-                    body.get('members'),
-                    body.get('order'),
-                )
+                result=await bot.order_placed(body)
             )
         )
 
@@ -35,7 +30,7 @@ def create_api(bot):
         )
 
     @routes.post('/order_status_updated')
-    async def order_placed(request: web.Request):
+    async def order_status_updated(request: web.Request):
         body = await request.json()
 
         return web.json_response(

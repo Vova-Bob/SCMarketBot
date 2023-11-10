@@ -29,6 +29,41 @@ class SCMarket(Bot):
     async def on_command_error(self, interaction, error):
         pass
 
+    async def order_placed(self, body):
+        print(body)
+        thread = await self.create_thread(
+            body.get('server_id'),
+            body.get('channel_id'),
+            body.get('members'),
+            body.get('order'),
+        )
+
+        if body.get('server_id'):
+            invite = self.verify_invite(body.get('server_id'), body.get('channel_id'), body.get("discord_invite"))
+        else:
+            invite = None
+
+        return dict(thread=thread, invite_code=invite)
+
+    async def verify_invite(self, customer_id, server_id, channel_id, invite_code):
+        guild = self.get_guild(server_id)
+        channel = self.get_channel(channel_id)
+
+        is_member = customer_id and guild.get_member(customer_id)
+        if is_member:
+            print("Yeeep, is member")
+            return None
+
+        try:
+            invites = await channel.invites()
+            if discord.utils.get(invites, code=invite_code):
+                return invite_code
+            else:
+                new_invite = await channel.create_invite(reason="Invite customer to the guild", unique=False)
+                return new_invite.code
+        except:
+            return None
+
     async def on_member_join(self, member):
         async with aiohttp.ClientSession() as session:
             async with session.get(
