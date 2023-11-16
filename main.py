@@ -50,16 +50,18 @@ class SCMarket(Bot):
                     pass
 
     async def fetch_threads(self):
-        for i in range(3):
-            async with self.session.get(
-                    f'{DISCORD_BACKEND_URL}/threads/all'
-            ) as resp:
+        while True:
+            for i in range(3):
                 try:
-                    result = await resp.json()
-                    thread_ids = list(map(int, result))
-                    return
+                    async with self.session.get(
+                            f'{DISCORD_BACKEND_URL}/threads/all'
+                    ) as resp:
+                            result = await resp.json()
+                            thread_ids = list(map(int, result))
+                            break
                 except Exception as e:
                     traceback.print_exc()
+            await asyncio.sleep(86400)
 
     async def order_placed(self, body):
         try:
