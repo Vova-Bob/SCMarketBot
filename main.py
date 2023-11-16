@@ -13,7 +13,7 @@ from util.api_server import create_api
 
 intents = discord.Intents.default()
 intents.members = True
-intents.messages = True
+intents.message_content = True
 
 
 class SCMarket(Bot):
