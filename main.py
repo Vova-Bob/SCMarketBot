@@ -16,6 +16,9 @@ intents.members = True
 
 
 class SCMarket(Bot):
+    thread_ids = []
+    session = None
+
     async def setup_hook(self):
         await self.add_cog(Registration(self))
         await self.tree.sync()
@@ -25,10 +28,37 @@ class SCMarket(Bot):
         site = web.TCPSite(runner, '0.0.0.0', 8080)
         asyncio.create_task(site.start())
 
+        self.session = aiohttp.ClientSession()
+        asyncio.create_task(self.fetch_threads())
         print("Ready!")
 
     async def on_command_error(self, interaction, error):
         pass
+
+    async def on_message(self, message):
+        if isinstance(message.channel, discord.Thread) and message.channel.id in self.thread_ids:
+            async with self.session.post(
+                    f'{DISCORD_BACKEND_URL}/threads/message',
+                    json=dict(
+                        author_id=str(message.author.id),
+                        name=message.author.name,
+                        thread_id=str(message.channel.id),
+                        content=message.content,
+                    )
+            ) as resp:
+                pass
+
+    async def fetch_threads(self):
+        for i in range(3):
+            async with self.session.get(
+                    f'{DISCORD_BACKEND_URL}/threads/all'
+            ) as resp:
+                try:
+                    result = await resp.json()
+                    thread_ids = list(map(int, result))
+                    return
+                except Exception as e:
+                    traceback.print_exc()
 
     async def order_placed(self, body):
         try:
@@ -72,7 +102,7 @@ class SCMarket(Bot):
                 invite = await self.fetch_invite(invite_code)
             else:
                 invite = None
-                
+
             if invite:
                 return invite_code
             else:
