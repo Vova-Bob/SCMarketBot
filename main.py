@@ -38,7 +38,7 @@ class SCMarket(Bot):
 
     async def on_message(self, message):
         if isinstance(message.channel, discord.Thread) and message.channel.id in self.thread_ids:
-            if not message.author.bot:
+            if not message.author.bot and message.content:
                 async with self.session.post(
                         f'{DISCORD_BACKEND_URL}/threads/message',
                         json=dict(
