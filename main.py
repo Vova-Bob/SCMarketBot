@@ -37,16 +37,17 @@ class SCMarket(Bot):
 
     async def on_message(self, message):
         if isinstance(message.channel, discord.Thread) and message.channel.id in self.thread_ids:
-            async with self.session.post(
-                    f'{DISCORD_BACKEND_URL}/threads/message',
-                    json=dict(
-                        author_id=str(message.author.id),
-                        name=message.author.name,
-                        thread_id=str(message.channel.id),
-                        content=message.content,
-                    )
-            ) as resp:
-                pass
+            if not message.author.bot:
+                async with self.session.post(
+                        f'{DISCORD_BACKEND_URL}/threads/message',
+                        json=dict(
+                            author_id=str(message.author.id),
+                            name=message.author.name,
+                            thread_id=str(message.channel.id),
+                            content=message.content,
+                        )
+                ) as resp:
+                    pass
 
     async def fetch_threads(self):
         for i in range(3):
