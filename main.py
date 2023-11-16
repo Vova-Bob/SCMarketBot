@@ -13,6 +13,7 @@ from util.api_server import create_api
 
 intents = discord.Intents.default()
 intents.members = True
+intents.messages = True
 
 
 class SCMarket(Bot):
@@ -57,7 +58,7 @@ class SCMarket(Bot):
                             f'{DISCORD_BACKEND_URL}/threads/all'
                     ) as resp:
                             result = await resp.json()
-                            self.thread_ids = list(map(lambda x: int(x['thread_id']), result['thread_ids']))
+                            self.thread_ids = list(map(int, result['thread_ids']))
                             break
                 except Exception as e:
                     traceback.print_exc()
