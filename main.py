@@ -159,6 +159,8 @@ class SCMarket(Bot):
             type=ChannelType.private_thread
         )
 
+        self.thread_ids.append(thread.id)
+
         await thread.add_user(self.user)
 
         failed = []

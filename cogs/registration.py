@@ -23,7 +23,6 @@ class Registration(commands.GroupCog, name="register"):
             name: str
     ):
         """Register a channel as the channel that will house threads for order fulfillment for your contractor. Make sure the bot has permission to see the channel and make private threads there."""
-        interaction.client.threads.append(interaction.channel.id)
         await self.register(interaction, "channel", "contractor", name)
 
     @channel.command(name="user")
@@ -32,7 +31,6 @@ class Registration(commands.GroupCog, name="register"):
             self, interaction: discord.Interaction,
     ):
         """Register a channel as the channel that will house threads for order fulfillment for your user. Make sure the bot has permission to see the channel and make private threads there."""
-        interaction.client.threads.append(interaction.channel.id)
         await self.register(interaction, "channel", "user", "")
 
     @server.command(name="contractor")
