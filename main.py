@@ -122,6 +122,7 @@ class SCMarket(Bot):
                     f'{DISCORD_BACKEND_URL}/threads/user/{member.id}',
             ) as resp:
                 if not resp.ok:
+                    print(resp.reason)
                     return
 
                 try:
