@@ -119,11 +119,7 @@ class SCMarket(Bot):
     async def on_member_join(self, member):
         async with aiohttp.ClientSession() as session:
             async with session.get(
-                    f'{DISCORD_BACKEND_URL}/register/user',
-                    json=dict(
-                        discord_id=str(member.id),
-                        server_id=str(member.guild.id),
-                    )
+                    f'{DISCORD_BACKEND_URL}/threads/user/{member.id}',
             ) as resp:
                 if not resp.ok:
                     return
