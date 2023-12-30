@@ -117,6 +117,7 @@ class SCMarket(Bot):
             return None
 
     async def on_member_join(self, member):
+        print(member)
         try:
             async with aiohttp.ClientSession() as session:
                 async with session.get(
@@ -137,7 +138,7 @@ class SCMarket(Bot):
                     guild: discord.Guild = member.guild
                     for thread_id in result['thread_ids']:
                         try:
-                            thread = guild.get_channel_or_thread(int(thread_id))
+                            thread = guild.get_thread(int(thread_id))
                             if thread:
                                 await thread.add_user(member)
                         except Exception as e:
