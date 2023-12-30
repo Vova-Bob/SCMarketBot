@@ -89,7 +89,7 @@ class SCMarket(Bot):
         if not guild:
             return None
 
-        channel: discord.TextChannel = await guild.fetch_channel(int(channel_id))
+        channel: discord.TextChannel = guild.get_channel(int(channel_id))
         if not channel:
             return None
 
@@ -133,7 +133,7 @@ class SCMarket(Bot):
                 guild: discord.Guild = member.guild
                 for thread_id in result['thread_ids']:
                     try:
-                        thread = await guild.fetch_channel(int(thread_id))
+                        thread = guild.get_channel_or_thread(int(thread_id))
                         if thread:
                             await thread.add_user(member)
                     except Exception as e:
