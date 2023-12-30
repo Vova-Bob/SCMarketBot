@@ -1,4 +1,5 @@
 import asyncio
+import logging
 import os
 import traceback
 
@@ -14,6 +15,8 @@ from util.api_server import create_api
 intents = discord.Intents.default()
 intents.members = True
 intents.message_content = True
+
+logger = logging.getLogger('SCMarketBot')
 
 
 class SCMarket(Bot):
@@ -31,7 +34,7 @@ class SCMarket(Bot):
 
         self.session = aiohttp.ClientSession()
         asyncio.create_task(self.fetch_threads())
-        print("Ready!")
+        logger.info("Ready!")
 
     async def on_command_error(self, interaction, error):
         pass
@@ -57,9 +60,9 @@ class SCMarket(Bot):
                     async with self.session.get(
                             f'{DISCORD_BACKEND_URL}/threads/all'
                     ) as resp:
-                            result = await resp.json()
-                            self.thread_ids = list(map(int, result['thread_ids']))
-                            break
+                        result = await resp.json()
+                        self.thread_ids = list(map(int, result['thread_ids']))
+                        break
                 except Exception as e:
                     traceback.print_exc()
             await asyncio.sleep(86400)
@@ -96,7 +99,6 @@ class SCMarket(Bot):
         try:
             is_member = customer_id and await guild.fetch_member(int(customer_id))
             if is_member:
-                print("Yeeep, is member")
                 return None
         except:
             pass
@@ -117,23 +119,22 @@ class SCMarket(Bot):
             return None
 
     async def on_member_join(self, member):
-        print(member)
         try:
             async with aiohttp.ClientSession() as session:
                 async with session.get(
                         f'{DISCORD_BACKEND_URL}/threads/user/{member.id}',
                 ) as resp:
                     if not resp.ok:
-                        print(resp.reason)
+                        logger.error("Failed to fetch threads: %s", resp.reason)
                         return
 
                     try:
                         result = await resp.json()
                     except Exception as e:
-                        print(e)
+                        logger.error("Failed to decode response: %s", e)
                         return
 
-                    print(result)
+                    logger.info("Threads payload: %s", result)
 
                     guild: discord.Guild = member.guild
                     for thread_id in result['thread_ids']:
@@ -142,7 +143,7 @@ class SCMarket(Bot):
                             if thread:
                                 await thread.add_user(member)
                         except Exception as e:
-                            print(e)
+                            logger.error("Failed to add to thread: %s", e)
                             pass
         except Exception as e:
             traceback.print_exc()
