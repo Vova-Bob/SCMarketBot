@@ -130,6 +130,8 @@ class SCMarket(Bot):
                     print(e)
                     return
 
+                print(result)
+
                 guild: discord.Guild = member.guild
                 for thread_id in result['thread_ids']:
                     try:
