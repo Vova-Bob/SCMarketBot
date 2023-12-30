@@ -117,31 +117,34 @@ class SCMarket(Bot):
             return None
 
     async def on_member_join(self, member):
-        async with aiohttp.ClientSession() as session:
-            async with session.get(
-                    f'{DISCORD_BACKEND_URL}/threads/user/{member.id}',
-            ) as resp:
-                if not resp.ok:
-                    print(resp.reason)
-                    return
+        try:
+            async with aiohttp.ClientSession() as session:
+                async with session.get(
+                        f'{DISCORD_BACKEND_URL}/threads/user/{member.id}',
+                ) as resp:
+                    if not resp.ok:
+                        print(resp.reason)
+                        return
 
-                try:
-                    result = await resp.json()
-                except Exception as e:
-                    print(e)
-                    return
-
-                print(result)
-
-                guild: discord.Guild = member.guild
-                for thread_id in result['thread_ids']:
                     try:
-                        thread = guild.get_channel_or_thread(int(thread_id))
-                        if thread:
-                            await thread.add_user(member)
+                        result = await resp.json()
                     except Exception as e:
                         print(e)
-                        pass
+                        return
+
+                    print(result)
+
+                    guild: discord.Guild = member.guild
+                    for thread_id in result['thread_ids']:
+                        try:
+                            thread = guild.get_channel_or_thread(int(thread_id))
+                            if thread:
+                                await thread.add_user(member)
+                        except Exception as e:
+                            print(e)
+                            pass
+        except Exception as e:
+            traceback.print_exc()
 
     async def create_thread(self, server_id: int, channel_id: int, members: list[int], order: dict):
         if not server_id or not channel_id or not members:
