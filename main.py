@@ -17,6 +17,7 @@ intents.members = True
 intents.message_content = True
 
 logger = logging.getLogger('SCMarketBot')
+logger.setLevel(logging.INFO)
 
 
 class SCMarket(Bot):
