@@ -122,12 +122,12 @@ class SCMarket(Bot):
                     f'{DISCORD_BACKEND_URL}/threads/user/{member.id}',
             ) as resp:
                 if not resp.ok:
-                    print(resp.reason)
                     return
 
                 try:
                     result = await resp.json()
                 except Exception as e:
+                    print(e)
                     return
 
                 guild: discord.Guild = member.guild
@@ -136,7 +136,8 @@ class SCMarket(Bot):
                         thread = await guild.fetch_channel(int(thread_id))
                         if thread:
                             await thread.add_user(member)
-                    except:
+                    except Exception as e:
+                        print(e)
                         pass
 
     async def create_thread(self, server_id: int, channel_id: int, members: list[int], order: dict):
