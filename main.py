@@ -6,7 +6,7 @@ import traceback
 import aiohttp
 import discord
 from aiohttp import web
-from discord import ChannelType
+from discord import ChannelType, app_commands
 from discord.ext.commands import Bot
 
 from cogs.registration import Registration, DISCORD_BACKEND_URL
@@ -17,7 +17,7 @@ intents.members = True
 intents.message_content = True
 
 logger = logging.getLogger('SCMarketBot')
-logger.setLevel(logging.INFO)
+logger.setLevel(logging.DEBUG)
 
 
 class SCMarket(Bot):
@@ -31,10 +31,10 @@ class SCMarket(Bot):
         runner = web.AppRunner(api)
         await runner.setup()
         site = web.TCPSite(runner, '0.0.0.0', 8080)
-        asyncio.create_task(site.start())
+        self.loop.create_task(site.start())
 
         self.session = aiohttp.ClientSession()
-        asyncio.create_task(self.fetch_threads())
+        self.loop.create_task(self.fetch_threads())
         logger.info("Ready!")
 
     async def on_command_error(self, interaction, error):

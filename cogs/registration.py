@@ -15,6 +15,9 @@ class Registration(commands.GroupCog, name="register"):
     channel = app_commands.Group(name="channel", description="Register a channel as the channel that will house threads for order fulfillment")
     server = app_commands.Group(name="server", description="Register a server as the official server for order fulfillment")
 
+    async def cog_app_command_error(self, interaction: discord.Interaction, error):
+        await interaction.response.send_message(str(error))
+
     @channel.command(name="contractor")
     @checks.has_permissions(administrator=True)
     @app_commands.describe(name='The name of the contractor')
