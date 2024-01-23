@@ -9,6 +9,7 @@ from aiohttp import web
 from discord import ChannelType, app_commands
 from discord.ext.commands import Bot
 
+from cogs.admin import Admin
 from cogs.registration import Registration, DISCORD_BACKEND_URL
 from util.api_server import create_api
 
@@ -26,6 +27,7 @@ class SCMarket(Bot):
 
     async def setup_hook(self):
         await self.add_cog(Registration(self))
+        await self.add_cog(Admin(self))
         await self.tree.sync()
 
         runner = web.AppRunner(api)
