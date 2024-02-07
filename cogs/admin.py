@@ -18,7 +18,6 @@ class Admin(commands.Cog):
                          url="https://sc-market.space")
         embed.add_field(name="Author",
                         value='henry232323')
-        embed.add_field(name="Library", value='discord.py (Python)')
         embed.add_field(name="Servers", value="{} servers".format(len(self.bot.guilds)))
         embed.set_footer(text='Made with discord.py', icon_url='http://i.imgur.com/5BFecvA.png')
         embed.set_thumbnail(url=self.bot.user.display_avatar.url)
