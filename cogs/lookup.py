@@ -5,7 +5,7 @@ import discord
 import humanize
 from discord import app_commands
 from discord.ext import commands
-from discord.ext.paginators.button_paginator import ButtonPaginator
+from discord.ext.paginators.button_paginator import ButtonPaginator, PaginatorButton
 
 categories = ["Armor", "Clothing", "Weapon", "Paint", "Bundle", "Flair", "Addon", "Consumable", "Other"]
 sorting_methods = {
@@ -107,7 +107,6 @@ class Lookup(commands.Cog):
                 params=params
         ) as resp:
             result = await resp.json()
-            print(result)
 
         embeds = [create_embed(item) for item in result['listings']]
 

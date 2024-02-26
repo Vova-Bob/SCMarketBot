@@ -1,4 +1,4 @@
-discord-py-paginators
+git+https://github.com/Soheab/discord-py-paginators.git
 discord.py
 aiohttp
 humanize
