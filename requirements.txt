@@ -1,2 +1,4 @@
+discord-py-paginators
 discord.py
 aiohttp
+humanize
