@@ -59,13 +59,15 @@ class Registration(commands.GroupCog, name="register"):
     @staticmethod
     async def register(interaction, type, entity, name=""):
         async with aiohttp.ClientSession() as session:
+            payload = dict(
+                discord_id=str(interaction.user.id),
+                channel_id=str(interaction.channel.id) if type == "channel" else None,
+                server_id=str(interaction.guild.id) if type == "server" else None,
+            )
+            print(payload)
             async with session.post(
                     f'{DISCORD_BACKEND_URL}/register/{entity}/{name}',
-                    json=dict(
-                        discord_id=str(interaction.user.id),
-                        channel_id=str(interaction.channel.id) if type == "channel" else None,
-                        server_id=str(interaction.guild.id) if type == "server" else None,
-                    )
+                    json=payload
             ) as resp:
                 try:
                     text = await resp.text()

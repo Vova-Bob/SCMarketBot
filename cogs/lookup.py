@@ -5,53 +5,15 @@ import discord
 import humanize
 from discord import app_commands
 from discord.ext import commands
-from discord.ext.paginators.button_paginator import ButtonPaginator, PaginatorButton
+from discord.ext.paginators.button_paginator import ButtonPaginator
 
-categories = ["Armor", "Clothing", "Weapon", "Paint", "Bundle", "Flair", "Addon", "Consumable", "Other"]
-sorting_methods = {
-    'title': "Title",
-    'price-low': "Price (Low to High)",
-    'price-high': "Price (High to Low)",
-    'quantity-low': "Quantity Available (Low to High)",
-    'quantity-high': "Quantity Available (High to Low)",
-    'date-new': "Date Listed (Old to New)",
-    'date-old': "Date Listed (New to Old)",
-    'activity': "Recent Activity",
-    'rating': "Rating (High to Low)",
-}
-
-sale_types = ["Aggregate", "Auction", "Sale"]
-
-
-def create_embed(listing: dict):
-    embed = discord.Embed(url=f"https://sc-market.space/market/{listing['listing_id']}", title=listing['title'])
-    embed.add_field(name="Item Type", value=listing['item_type'].capitalize())
-    if listing["listing_type"] != "unique":
-        embed.add_field(name="Minimum Price", value=f"{int(listing['minimum_price']):,} aUEC")
-        embed.add_field(name="Maximum Price", value=f"{int(listing['maximum_price']):,} aUEC")
-    else:
-        embed.add_field(name="Price", value=f"{int(listing['price']):,} aUEC")
-        embed.add_field(
-            name="Seller",
-            value=f"[{listing['contractor_seller'] or listing['user_seller']}]({'https://sc-market.space/contractor/' + listing['contractor_seller'] if listing['contractor_seller'] else 'https://sc-market.space/user/' + listing['user_seller']}) {'⭐' * int(round(listing['avg_rating']))}"
-        )
-
-    if listing['auction_end_time'] is not None:
-        date = datetime.datetime.strptime(listing['auction_end_time'], '%Y-%m-%dT%H:%M:%S.%fZ')
-        embed.add_field(name="Auction End", value="Ending " + humanize.naturaltime(date))
-
-    embed.add_field(name="Quantity Available", value=f"{int(listing['quantity_available']):,}")
-
-    embed.set_image(url=listing['photo'])
-    embed.timestamp = datetime.datetime.strptime(listing['timestamp'], '%Y-%m-%dT%H:%M:%S.%fZ')
-
-    return embed
+from util.fetch import public_fetch
+from util.listings import create_market_embed, categories, sorting_methods, sale_types, create_market_embed_individual
 
 
 class Lookup(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-        self.session = aiohttp.ClientSession()
 
     @app_commands.command(name="search")
     @app_commands.describe(
@@ -102,13 +64,71 @@ class Lookup(commands.Cog):
         if max_cost:
             params['maxCost'] = max_cost
 
-        async with self.session.get(
-                "https://api.sc-market.space/api/market/public/search",
-                params=params
-        ) as resp:
-            result = await resp.json()
+        result = await public_fetch(
+            "/market/public/search",
+            params=params,
+            session=self.bot.session,
+        )
 
-        embeds = [create_embed(item) for item in result['listings']]
+        embeds = [create_market_embed(item) for item in result['listings'] if item['listing']['quantity_available']]
+
+        paginator = ButtonPaginator(embeds, author_id=interaction.user.id)
+        await paginator.send(interaction)
+
+    lookup = app_commands.Group(name="lookup", description="Look up an org or user's market listings")
+
+    @lookup.command(name="user")
+    @app_commands.describe(
+        handle='The handle of the user',
+    )
+    async def user_search(
+            self,
+            interaction: discord.Interaction,
+            handle: str,
+    ):
+        """Lookup the market listings for a user"""
+        try:
+            result = await public_fetch(
+                f"/market/user/{handle}",
+                session=self.bot.session,
+            )
+        except:
+            await interaction.response.send_message("Invalid user")
+            return
+
+        if not result:
+            await interaction.response.send_message("No listings to display for user")
+            return
+
+        embeds = [create_market_embed_individual(item) for item in result]
+
+        paginator = ButtonPaginator(embeds, author_id=interaction.user.id)
+        await paginator.send(interaction)
+
+    @lookup.command(name="org")
+    @app_commands.describe(
+        spectrum_id='The spectrum ID of the org',
+    )
+    async def org_search(
+            self,
+            interaction: discord.Interaction,
+            spectrum_id: str,
+    ):
+        """Lookup the market listings for an org"""
+        try:
+            result = await public_fetch(
+                f"/market/contractor/{spectrum_id}",
+                session=self.bot.session,
+            )
+        except:
+            await interaction.response.send_message("Invalid org")
+            return
+
+        if not result:
+            await interaction.response.send_message("No listings to display for org")
+            return
+
+        embeds = [create_market_embed_individual(item) for item in result if item['listing']['quantity_available']]
 
         paginator = ButtonPaginator(embeds, author_id=interaction.user.id)
         await paginator.send(interaction)

@@ -6,11 +6,12 @@ import traceback
 import aiohttp
 import discord
 from aiohttp import web
-from discord import ChannelType, app_commands
+from discord import ChannelType
 from discord.ext.commands import Bot
 
 from cogs.admin import Admin
 from cogs.lookup import Lookup
+from cogs.order import order
 from cogs.registration import Registration, DISCORD_BACKEND_URL
 from util.api_server import create_api
 
@@ -30,6 +31,8 @@ class SCMarket(Bot):
         await self.add_cog(Registration(self))
         await self.add_cog(Admin(self))
         await self.add_cog(Lookup(self))
+        await self.add_cog(order(self))
+        # await self.add_cog(Stock(self))
         await self.tree.sync()
 
         runner = web.AppRunner(api)
@@ -82,8 +85,12 @@ class SCMarket(Bot):
             )
 
             if body.get('server_id') and body.get('channel_id'):
-                invite = await self.verify_invite(body.get('customer_discord_id'), body.get('server_id'),
-                                                  body.get('channel_id'), body.get("discord_invite"))
+                invite = await self.verify_invite(
+                    body.get('customer_discord_id'),
+                    body.get('server_id'),
+                    body.get('channel_id'),
+                    body.get("discord_invite")
+                )
             else:
                 invite = None
 
