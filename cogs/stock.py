@@ -1,74 +1,146 @@
 import json
 import traceback
+from datetime import datetime
 from typing import List
 
 import discord
 import ujson
 from discord import app_commands
 from discord.ext import commands
+from discord.ext.paginators.button_paginator import ButtonPaginator
 
 from util.fetch import internal_post, get_user_listings, get_user_orgs, get_org_listings
+from util.iter import chunks
 
 
-class Market(commands.Cog):
+def create_stock_embed(entries: List[str]):
+    embed = discord.Embed(url=f"https://sc-market.space/market/manage?quantityAvailable=0",
+                          title="My Stock")
+    body = '\n'.join(entries)
+    embed.description = f"""```js\n{body}\n```"""
+    embed.timestamp = datetime.now()
+
+    return embed
+
+
+class stock(commands.GroupCog):
     def __init__(self, bot):
         self.bot = bot
 
-    @app_commands.command(name="stock")
+    @app_commands.command(name="set")
     @app_commands.describe(
         owner='The owner of the listing you want to update. Either you or one of your contractors',
         listing='The listing to modify',
         quantity='The new quantity to set for the listing',
-        action='Choose whether to set, add, or subtract the stock',
-    )
-    @app_commands.choices(
-        action=[
-            app_commands.Choice(name=name, value=value) for name, value in
-            [("Add", "add"), ("Set", "set"), ("Subtract", "sub")]
-        ],
     )
     async def set_stock(
             self,
             interaction: discord.Interaction,
-            action: str,
             owner: str,
             listing: str,
             quantity: int,
     ):
         """Set the stock quantity for a given market listing"""
+        await self.handle_stock_change(interaction, 'set', owner, listing, quantity)
 
-        try:
-            listing_payload = json.loads(listing)
-            payload = {
-                "quantity": quantity,
-                "listing_id": listing_payload["l"],
-                "discord_id": str(interaction.user.id),
-            }
+    @app_commands.command(name="add")
+    @app_commands.describe(
+        owner='The owner of the listing you want to update. Either you or one of your contractors',
+        listing='The listing to modify',
+        quantity='The quantity to add to the listings stock',
+    )
+    async def add_stock(
+            self,
+            interaction: discord.Interaction,
+            owner: str,
+            listing: str,
+            quantity: int,
+    ):
+        """Add to the stock quantity for a given market listing"""
+        await self.handle_stock_change(interaction, 'add', owner, listing, quantity)
 
-            response = await internal_post(
-                f"/threads/market/quantity/{action.lower()}",
-                json=payload,
-                session=self.bot.session
+    @app_commands.command(name="sub")
+    @app_commands.describe(
+        owner='The owner of the listing you want to update. Either you or one of your contractors',
+        listing='The listing to modify',
+        quantity='The quantity to subtract from the listings stock',
+    )
+    async def sub_stock(
+            self,
+            interaction: discord.Interaction,
+            owner: str,
+            listing: str,
+            quantity: int,
+    ):
+        """Subtract from the stock quantity for a given market listing"""
+        await self.handle_stock_change(interaction, 'sub', owner, listing, quantity)
+
+    async def handle_stock_change(self, interaction: discord.Interaction, action: str, owner: str, listing: str,
+                                  quantity: int):
+        listing_payload = json.loads(listing)
+        payload = {
+            "quantity": quantity,
+            "listing_id": listing_payload["l"],
+            "discord_id": str(interaction.user.id),
+        }
+
+        response = await internal_post(
+            f"/threads/market/quantity/{action.lower()}",
+            json=payload,
+            session=self.bot.session
+        )
+
+        if response.get("error"):
+            await interaction.response.send_message(response['error'])
+        else:
+            newquantity = listing_payload['q']
+            if action == "add":
+                newquantity += quantity
+            elif action == "sub":
+                newquantity -= quantity
+            else:
+                newquantity = quantity
+
+            await interaction.response.send_message(
+                f"Stock for [{listing_payload['t']}](<https://sc-market.space/market/{listing_payload['l']}>) has been set to `{newquantity}` from `{listing_payload['q']}`."
             )
 
-            if response.get("error"):
-                await interaction.response.send_message(response['error'])
-            else:
-                newquantity = listing_payload['q']
-                if action == "add":
-                    newquantity += quantity
-                elif action == "sub":
-                    newquantity -= quantity
-                else:
-                    newquantity = quantity
+    @app_commands.command(name="view")
+    @app_commands.describe(
+        owner='The owner of the listing you want to update. Either you or one of your contractors',
+    )
+    async def view_stock(
+            self,
+            interaction: discord.Interaction,
+            owner: str,
+    ):
+        """Set the stock quantity for a given market listing"""
+        if interaction.namespace.owner != "_ME":
+            owner = json.loads(interaction.namespace.owner)
+            listings = await get_org_listings(owner['s'], interaction.user.id,
+                                              session=self.bot.session)
+        else:
+            listings = await get_user_listings(interaction.user.id, session=self.bot.session)
 
-                await interaction.response.send_message(
-                    f"Stock for [{listing_payload['t']}](<https://sc-market.space/market/{listing_payload['l']}>) has been set to `{newquantity}` from `{listing_payload['q']}`."
-                )
-        except:
-            traceback.print_exc()
+        if not listings:
+            await interaction.response.send_message("No listings to display", ephemeral=True)
+
+        mq = max(3, len(str(max(listings, key=lambda l: int(l['quantity_available']))['quantity_available'])))
+
+        entries = []
+        for listing in listings:
+            entries.append(f"{listing['quantity_available']:<{mq}} {listing['title']}")
+
+        pages = list(chunks(entries, 10))
+        for page in pages:
+            page.insert(0, f"{'Qt.':<{mq}} Item")
+        embeds = [create_stock_embed(page) for page in pages]
+        paginator = ButtonPaginator(embeds, author_id=interaction.user.id)
+        await paginator.send(interaction)
 
     @set_stock.autocomplete('listing')
+    @add_stock.autocomplete('listing')
+    @sub_stock.autocomplete('listing')
     async def update_stock_listing(
             self,
             interaction: discord.Interaction,
@@ -97,6 +169,9 @@ class Market(commands.Cog):
             raise e
 
     @set_stock.autocomplete('owner')
+    @add_stock.autocomplete('owner')
+    @sub_stock.autocomplete('owner')
+    @view_stock.autocomplete('owner')
     async def update_stock_owner(
             self,
             interaction: discord.Interaction,

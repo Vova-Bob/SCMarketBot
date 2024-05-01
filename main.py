@@ -13,7 +13,7 @@ from cogs.admin import Admin
 from cogs.lookup import Lookup
 from cogs.order import order
 from cogs.registration import Registration, DISCORD_BACKEND_URL
-from cogs.stock import Market
+from cogs.stock import stock
 from util.api_server import create_api
 
 intents = discord.Intents.default()
@@ -33,7 +33,7 @@ class SCMarket(Bot):
         await self.add_cog(Admin(self))
         await self.add_cog(Lookup(self))
         await self.add_cog(order(self))
-        await self.add_cog(Market(self))
+        await self.add_cog(stock(self))
 
         await self.tree.sync()
 
