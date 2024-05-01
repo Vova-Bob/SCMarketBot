@@ -1,73 +1,89 @@
-import datetime
+from typing import List
 
-import aiohttp
 import discord
-import humanize
 from discord import app_commands
 from discord.ext import commands
-from discord.ext.paginators.button_paginator import ButtonPaginator, PaginatorButton
 
-class Stock(commands.Cog):
+from util.fetch import internal_post, get_user_listings, get_user_orgs, get_org_listings
+
+
+class Market(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-        self.session = aiohttp.ClientSession()
 
-    @app_commands.command(name="search")
+    @app_commands.command(name="stock")
     @app_commands.describe(
-        query='The search query',
-        category='What category the item belongs to',
-        sorting='What order to sort the listings by',
-        sale_type='The method of sale',
-        quantity_available='The minimum quantity available an item must have',
-        min_cost='The minimum cost of items to search',
-        max_cost='The maximum cost of items to search',
+        owner='The owner of the listing you want to update. Either you or one of your contractors',
+        listing='The listing to modify',
+        quantity='The new quantity to set for the listing',
+        action='Choose whether to set, add, or subtract the stock',
     )
     @app_commands.choices(
-        category=[
-            app_commands.Choice(name=item, value=item.lower()) for item in categories
-        ],
-        sorting=[
-            app_commands.Choice(name=value, value=key) for key, value in sorting_methods.items()
-        ],
-        sale_type=[
-            app_commands.Choice(name=item, value=item.lower()) for item in sale_types
+        action=[
+            app_commands.Choice(name=name, value=value) for name, value in
+            [("Add", "add"), ("Set", "set"), ("Subtract", "sub")]
         ],
     )
-    async def search(
+    async def set_stock(
             self,
             interaction: discord.Interaction,
-            query: str,
-            category: app_commands.Choice[str] = '',
-            sorting: app_commands.Choice[str] = 'activity',
-            sale_type: app_commands.Choice[str] = '',
-            quantity_available: int = 1,
-            min_cost: int = 0,
-            max_cost: int = 0,
+            action: str,
+            owner: str,
+            listing: str,
+            quantity: int,
     ):
-        """Search the site market listings"""
-        params = {
-            'query': query,
-            'sort': sorting,
-            'quantityAvailable': quantity_available,
-            'minCost': min_cost,
-            'page_size': 48,
-            'index': 0
+        """Set the stock quantity for a given market listing"""
+        payload = {
+            "quantity": quantity,
+            "listing_id": listing,
+            "discord_id": str(interaction.user.id),
         }
 
-        if category:
-            params['item_type'] = category
-        if sale_type:
-            params['sale_type'] = sale_type
-        if max_cost:
-            params['maxCost'] = max_cost
+        if owner != "_ME":
+            payload["contractor_id"] = owner
 
-        async with self.session.get(
-                "https://api.sc-market.space/api/market/public/search",
-                params=params
-        ) as resp:
-            result = await resp.json()
+        response = await internal_post(
+            "/threads/market/quantity/set",
+            json=payload,
+            session=self.bot.session
+        )
 
-        embeds = [create_embed(item) for item in result['listings']]
+        if response.get("error"):
+            await interaction.response.send_message(response['error'])
+        else:
+            await interaction.response.send_message(
+                f"Successfully updated stock for the [listing](<https://sc-market.space/market/{listing}>)"
+            )
 
-        paginator = ButtonPaginator(embeds, author_id=interaction.user.id)
-        await paginator.send(interaction)
+    @set_stock.autocomplete('listing')
+    async def update_stock_listing(
+            self,
+            interaction: discord.Interaction,
+            current: str,
+    ) -> List[app_commands.Choice[str]]:
+        if interaction.namespace.owner != "_ME":
+            listings = await get_org_listings(interaction.namespace.owner, interaction.user.id,
+                                              session=self.bot.session)
+        else:
+            listings = await get_user_listings(interaction.user.id, session=self.bot.session)
+
+        return [
+            app_commands.Choice(name=f"{listing['title']} ({listing['listing_id'].split('-')[0]})",
+                                value=listing['listing_id'])
+            for listing in listings if
+            current.lower() in listing['title'].lower() or current.lower() in listing['description'].lower()
+        ][:25]
+
+    @set_stock.autocomplete('owner')
+    async def update_stock_owner(
+            self,
+            interaction: discord.Interaction,
+            current: str,
+    ) -> List[app_commands.Choice[str]]:
+        orgs = await get_user_orgs(interaction.user.id, session=self.bot.session)
+
+        return [
+            app_commands.Choice(name=f"{org['name']} ({org['spectrum_id']})", value=org['spectrum_id'])
+            for org in orgs if
+            current.lower() in org['name'].lower() or current.lower() in org['spectrum_id'].lower()
+        ] + [app_commands.Choice(name=f"Me", value='_ME')]

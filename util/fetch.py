@@ -58,6 +58,21 @@ async def internal_post(url, params=None, json=None, session=None):
             await tempsession.close()
 
 
-async def get_users_orders(discord_id, session=None):
+async def get_user_orders(discord_id, session=None):
     response = await internal_fetch(f"/threads/user/{discord_id}/assigned", session=session)
     return response['orders'] if 'orders' in response else response
+
+
+async def get_user_listings(discord_id, session=None):
+    response = await internal_fetch(f"/threads/user/{discord_id}/listings", session=session)
+    return response['listings'] if 'listings' in response else response
+
+
+async def get_org_listings(contractor_id, discord_id, session=None):
+    response = await internal_fetch(f"/threads/user/{discord_id}/listings/{contractor_id}", session=session)
+    return response['listings'] if 'listings' in response else response
+
+
+async def get_user_orgs(discord_id, session=None):
+    response = await internal_fetch(f"/threads/user/{discord_id}/contractors", session=session)
+    return response['contractors'] if 'contractors' in response else response

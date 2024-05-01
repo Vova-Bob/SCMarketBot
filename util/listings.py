@@ -43,8 +43,10 @@ def create_market_embed(listing: dict):
 
     return embed
 
+
 def create_market_embed_individual(listing: dict):
-    embed = discord.Embed(url=f"https://sc-market.space/market/{listing['listing']['listing_id']}", title=listing['details']['title'])
+    embed = discord.Embed(url=f"https://sc-market.space/market/{listing['listing']['listing_id']}",
+                          title=listing['details']['title'])
     embed.add_field(name="Item Type", value=listing['details']['item_type'].capitalize())
     embed.add_field(name="Price", value=f"{int(listing['listing']['price']):,} aUEC")
     seller = listing['listing'].get('contractor_seller', listing['listing'].get('user_seller', None))
@@ -59,7 +61,8 @@ def create_market_embed_individual(listing: dict):
 
     embed.add_field(name="Quantity Available", value=f"{int(listing['listing']['quantity_available']):,}")
 
-    embed.set_image(url=listing['photos'][0] if listing['photos'] else "https://cdn.robertsspaceindustries.com/static/images/Temp/default-image.png")
+    embed.set_image(url=listing['photos'][0] if listing[
+        'photos'] else "https://cdn.robertsspaceindustries.com/static/images/Temp/default-image.png")
     embed.timestamp = datetime.datetime.strptime(listing['listing']['timestamp'], '%Y-%m-%dT%H:%M:%S.%fZ')
 
     return embed
