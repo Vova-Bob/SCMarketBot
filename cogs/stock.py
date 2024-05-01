@@ -102,7 +102,7 @@ class stock(commands.GroupCog):
                 newquantity = quantity
 
             await interaction.response.send_message(
-                f"Stock for [{listing_payload['t']}](<https://sc-market.space/market/{listing_payload['l']}>) has been set to `{newquantity}` from `{listing_payload['q']}`."
+                f"Stock for [{listing_payload['t']}](<https://sc-market.space/market/{listing_payload['l']}>) has been set from `{listing_payload['q']}` to `{newquantity}`."
             )
 
     @app_commands.command(name="view")
