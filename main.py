@@ -47,7 +47,10 @@ class SCMarket(Bot):
         logger.info("Ready!")
 
     async def on_command_error(self, interaction, error):
-        pass
+        print(error)
+
+    def on_error(self, *args, **kwargs):
+        print(*args, kwargs)
 
     async def on_message(self, message):
         if isinstance(message.channel, discord.Thread) and message.channel.id in self.thread_ids:

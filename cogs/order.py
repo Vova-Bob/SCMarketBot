@@ -1,6 +1,9 @@
+import json
+import traceback
 from typing import List
 
 import discord
+import ujson
 from discord import app_commands
 from discord.ext import commands
 
@@ -29,6 +32,7 @@ class order(commands.GroupCog):
             order: str = None,
     ):
         """Set the new status for the order in the current thread"""
+        order_payload = json.loads(order)
         if order is None:
             if isinstance(interaction.channel, discord.Thread):
                 response = await internal_post("/threads/order/status",
@@ -46,7 +50,7 @@ class order(commands.GroupCog):
                 "/threads/order/status",
                 json={
                     "status": newstatus,
-                    "order_id": order,
+                    "order_id": order_payload['o'],
                     "discord_id": str(interaction.user.id)
                 },
                 session=self.bot.session
@@ -57,7 +61,7 @@ class order(commands.GroupCog):
         else:
             if order:
                 await interaction.response.send_message(
-                    f"Successfully updated status for the [order](<https://sc-market.space/contract/{order}>)"
+                    f"Successfully updated the status to {newstatus} for order '[{order_payload['t']}](<https://sc-market.space/contract/{order_payload['o']}>)'"
                 )
             else:
                 await interaction.response.send_message(f"Successfully updated status for the order")
@@ -68,11 +72,17 @@ class order(commands.GroupCog):
             interaction: discord.Interaction,
             current: str,
     ) -> List[app_commands.Choice[str]]:
-        orders = await get_user_orders(interaction.user.id, session=self.bot.session)
+        try:
+            orders = await get_user_orders(interaction.user.id, session=self.bot.session)
+            choices = [
+                app_commands.Choice(name=order['title'],
+                                    value=ujson.dumps(dict(t=order['title'], o=order['order_id'])))
+                for order in orders if
+                (current.lower() in order['title'].lower() or current.lower() in order['description'].lower()) and
+                order['status'] != interaction.namespace.newstatus
+            ]
+            return choices
 
-        return [
-            app_commands.Choice(name=f"{order['title']} ({order['order_id'].split('-')[0]})", value=order['order_id'])
-            for order in orders if
-            (current.lower() in order['title'].lower() or current.lower() in order['description'].lower()) and order[
-                'status'] != interaction.namespace.newstatus
-        ]
+        except Exception as e:
+            traceback.print_exc()
+            raise e
