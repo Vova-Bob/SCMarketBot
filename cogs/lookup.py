@@ -1,13 +1,11 @@
-import datetime
+from typing import List
 
-import aiohttp
 import discord
-import humanize
 from discord import app_commands
 from discord.ext import commands
 from discord.ext.paginators.button_paginator import ButtonPaginator
 
-from util.fetch import public_fetch
+from util.fetch import public_fetch, search_users, search_orgs
 from util.listings import create_market_embed, categories, sorting_methods, sale_types, create_market_embed_individual
 
 
@@ -132,3 +130,38 @@ class Lookup(commands.Cog):
 
         paginator = ButtonPaginator(embeds, author_id=interaction.user.id)
         await paginator.send(interaction)
+
+    @user_search.autocomplete('handle')
+    async def autocomplete_get_users(
+            self,
+            interaction: discord.Interaction,
+            current: str,
+    ) -> List[app_commands.Choice[str]]:
+        users = await search_users(current, self.bot.session)
+
+        choices = [
+                      app_commands.Choice(
+                          name=f"{user['display_name'][:100]} ({user['username']})",
+                          value=user['username']
+                      )
+                      for user in users
+                  ][:25]
+        return choices
+
+    @org_search.autocomplete('spectrum_id')
+    async def autocomplete_get_orgs(
+            self,
+            interaction: discord.Interaction,
+            current: str,
+    ) -> List[app_commands.Choice[str]]:
+        orgs = await search_orgs(current, self.bot.session)
+
+        print(orgs)
+        choices = [
+                      app_commands.Choice(
+                          name=f"{org['name'][:30]} ({org['spectrum_id']})",
+                          value=org['spectrum_id']
+                      )
+                      for org in orgs
+                  ][:25]
+        return choices

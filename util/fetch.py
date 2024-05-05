@@ -76,3 +76,14 @@ async def get_org_listings(contractor_id, discord_id, session=None):
 async def get_user_orgs(discord_id, session=None):
     response = await internal_fetch(f"/threads/user/{discord_id}/contractors", session=session)
     return response['contractors'] if 'contractors' in response else response
+
+
+async def search_users(query, session=None):
+    response = await public_fetch(f"/profile/search/{query}", session=session)
+    print(response)
+    return response
+
+
+async def search_orgs(query, session=None):
+    response = await public_fetch(f"/contractors", params=dict(query=query, sorting='name'), session=session)
+    return response['items'] if 'items' in response else response

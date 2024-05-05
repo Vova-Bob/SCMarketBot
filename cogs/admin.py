@@ -11,6 +11,7 @@ class Admin(commands.Cog):
 
     @app_commands.command()
     async def info(self, interaction: discord.Interaction):
+        """Some simple details about the bot."""
         me = self.bot.user if not interaction.guild else interaction.guild.me
         appinfo = await self.bot.application_info()
         embed = discord.Embed(color=randint(0, 0xFFFFFF), )
