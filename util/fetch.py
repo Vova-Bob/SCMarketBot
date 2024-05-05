@@ -80,7 +80,6 @@ async def get_user_orgs(discord_id, session=None):
 
 async def search_users(query, session=None):
     response = await public_fetch(f"/profile/search/{query}", session=session)
-    print(response)
     return response
 
 

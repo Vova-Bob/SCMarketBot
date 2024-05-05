@@ -49,10 +49,10 @@ def create_market_embed_individual(listing: dict):
                           title=listing['details']['title'])
     embed.add_field(name="Item Type", value=listing['details']['item_type'].capitalize())
     embed.add_field(name="Price", value=f"{int(listing['listing']['price']):,} aUEC")
-    seller = listing['listing'].get('contractor_seller', listing['listing'].get('user_seller', None))
+    seller = listing['listing'].get('contractor_seller') or listing['listing'].get('user_seller')
     embed.add_field(
         name="Seller",
-        value=f"[{seller['name']}]({'https://sc-market.space/contractor/' + seller['spectrum_id'] if listing['listing']['contractor_seller'] else 'https://sc-market.space/user/' + seller['username']}) {'⭐' * int(round(seller['rating']['avg_rating'] / 10))}"
+        value=f"[{seller.get('name') or seller.get('display_name')}]({'https://sc-market.space/contractor/' + seller['spectrum_id'] if listing['listing'].get('contractor_seller') else 'https://sc-market.space/user/' + seller['username']}) {'⭐' * int(round(seller['rating']['avg_rating'] / 10))}"
     )
 
     if listing.get('auction_details') and listing['auction_details']['auction_end_time'] is not None:

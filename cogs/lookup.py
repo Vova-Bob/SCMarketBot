@@ -94,11 +94,11 @@ class Lookup(commands.Cog):
             await interaction.response.send_message("Invalid user")
             return
 
-        if not result:
-            await interaction.response.send_message("No listings to display for user")
-            return
-
         embeds = [create_market_embed_individual(item) for item in result]
+
+        if not embeds:
+            await interaction.response.send_message("No listings to display for org")
+            return
 
         paginator = ButtonPaginator(embeds, author_id=interaction.user.id)
         await paginator.send(interaction)
@@ -122,11 +122,11 @@ class Lookup(commands.Cog):
             await interaction.response.send_message("Invalid org")
             return
 
-        if not result:
+        embeds = [create_market_embed_individual(item) for item in result if item['listing']['quantity_available']]
+
+        if not embeds:
             await interaction.response.send_message("No listings to display for org")
             return
-
-        embeds = [create_market_embed_individual(item) for item in result if item['listing']['quantity_available']]
 
         paginator = ButtonPaginator(embeds, author_id=interaction.user.id)
         await paginator.send(interaction)
@@ -156,7 +156,6 @@ class Lookup(commands.Cog):
     ) -> List[app_commands.Choice[str]]:
         orgs = await search_orgs(current, self.bot.session)
 
-        print(orgs)
         choices = [
                       app_commands.Choice(
                           name=f"{org['name'][:30]} ({org['spectrum_id']})",
