@@ -6,7 +6,8 @@ from discord.ext import commands
 from discord.ext.paginators.button_paginator import ButtonPaginator
 
 from util.fetch import public_fetch, search_users, search_orgs
-from util.listings import create_market_embed, categories, sorting_methods, sale_types, create_market_embed_individual
+from util.listings import create_market_embed, categories, sorting_methods, sale_types, create_market_embed_individual, \
+    display_listings_compact
 
 
 class Lookup(commands.Cog):
@@ -83,10 +84,11 @@ class Lookup(commands.Cog):
             self,
             interaction: discord.Interaction,
             handle: str,
+            compact: bool = False,
     ):
         """Lookup the market listings for a user"""
         try:
-            result = await public_fetch(
+            listings = await public_fetch(
                 f"/market/user/{handle}",
                 session=self.bot.session,
             )
@@ -94,14 +96,18 @@ class Lookup(commands.Cog):
             await interaction.response.send_message("Invalid user")
             return
 
-        embeds = [create_market_embed_individual(item) for item in result]
+        if compact:
+            await display_listings_compact(interaction, [{**l['details'], **l['listing']} for l in listings])
+        else:
+            embeds = [create_market_embed_individual(item) for item in listings if
+                      item['listing']['quantity_available']]
 
-        if not embeds:
-            await interaction.response.send_message("No listings to display for org")
-            return
+            if not embeds:
+                await interaction.response.send_message("No listings to display for org")
+                return
 
-        paginator = ButtonPaginator(embeds, author_id=interaction.user.id)
-        await paginator.send(interaction)
+            paginator = ButtonPaginator(embeds, author_id=interaction.user.id)
+            await paginator.send(interaction)
 
     @lookup.command(name="org")
     @app_commands.describe(
@@ -111,10 +117,11 @@ class Lookup(commands.Cog):
             self,
             interaction: discord.Interaction,
             spectrum_id: str,
+            compact: bool = False,
     ):
         """Lookup the market listings for an org"""
         try:
-            result = await public_fetch(
+            listings = await public_fetch(
                 f"/market/contractor/{spectrum_id}",
                 session=self.bot.session,
             )
@@ -122,14 +129,18 @@ class Lookup(commands.Cog):
             await interaction.response.send_message("Invalid org")
             return
 
-        embeds = [create_market_embed_individual(item) for item in result if item['listing']['quantity_available']]
+        if compact:
+            await display_listings_compact(interaction, [{**l['details'], **l['listing']} for l in listings])
+        else:
+            embeds = [create_market_embed_individual(item) for item in listings if
+                      item['listing']['quantity_available']]
 
-        if not embeds:
-            await interaction.response.send_message("No listings to display for org")
-            return
+            if not embeds:
+                await interaction.response.send_message("No listings to display for org")
+                return
 
-        paginator = ButtonPaginator(embeds, author_id=interaction.user.id)
-        await paginator.send(interaction)
+            paginator = ButtonPaginator(embeds, author_id=interaction.user.id)
+            await paginator.send(interaction)
 
     @user_search.autocomplete('handle')
     async def autocomplete_get_users(
@@ -138,7 +149,6 @@ class Lookup(commands.Cog):
             current: str,
     ) -> List[app_commands.Choice[str]]:
         users = await search_users(current, self.bot.session)
-
         choices = [
                       app_commands.Choice(
                           name=f"{user['display_name'][:100]} ({user['username']})",

@@ -1,7 +1,11 @@
 import datetime
+from typing import List
 
 import discord
 import humanize
+from discord.ext.paginators.button_paginator import ButtonPaginator
+
+from util.iter import chunks
 
 categories = ["Armor", "Clothing", "Weapon", "Paint", "Bundle", "Flair", "Addon", "Consumable", "Other"]
 sorting_methods = {
@@ -66,3 +70,35 @@ def create_market_embed_individual(listing: dict):
     embed.timestamp = datetime.datetime.strptime(listing['listing']['timestamp'], '%Y-%m-%dT%H:%M:%S.%fZ')
 
     return embed
+
+
+def create_stock_embed(entries: List[str]):
+    embed = discord.Embed(url=f"https://sc-market.space/market/manage?quantityAvailable=0",
+                          title="My Stock")
+    body = '\n'.join(entries)
+    embed.description = f"""```ansi\n{body}\n```"""
+    embed.timestamp = datetime.datetime.now()
+
+    return embed
+
+
+async def display_listings_compact(interaction: discord.Interaction, alllistings: list):
+    pages = []
+    for listings in chunks(alllistings, 10):
+        mq = max(3, *(len(f"{int(l['quantity_available']):,}") for l in listings))
+        tq = max(3, *(len(l['title']) for l in listings))
+        pq = max(3, *(len(f"{int(l['price']):,}") for l in listings))
+
+        entries = []
+        for listing in listings:
+            entries.append(
+                f"\u001b[0;40;33m {int(listing['quantity_available']):>{mq},} \u001b[0;40;37m| \u001b[0;40;36m{listing['title']:<{tq}} \u001b[0;40;37m| \u001b[0;40;33m{int(listing['price']):>{pq},} \u001b[0;40;36maUEC "
+            )
+
+        header = f"\u001b[4;40;37m {'Qt.':<{mq}} | {'Item':<{tq}} | {'Price':>{pq + 5}} "
+        entries.insert(0, header)
+        pages.append(entries)
+
+    embeds = [create_stock_embed(page) for page in pages]
+    paginator = ButtonPaginator(embeds, author_id=interaction.user.id)
+    await paginator.send(interaction)

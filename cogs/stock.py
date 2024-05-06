@@ -1,26 +1,14 @@
 import json
 import traceback
-from datetime import datetime
 from typing import List
 
 import discord
 import ujson
 from discord import app_commands
 from discord.ext import commands
-from discord.ext.paginators.button_paginator import ButtonPaginator
 
 from util.fetch import internal_post, get_user_listings, get_user_orgs, get_org_listings
-from util.iter import chunks
-
-
-def create_stock_embed(entries: List[str]):
-    embed = discord.Embed(url=f"https://sc-market.space/market/manage?quantityAvailable=0",
-                          title="My Stock")
-    body = '\n'.join(entries)
-    embed.description = f"""```ansi\n{body}\n```"""
-    embed.timestamp = datetime.now()
-
-    return embed
+from util.listings import display_listings_compact
 
 
 class stock(commands.GroupCog):
@@ -124,24 +112,9 @@ class stock(commands.GroupCog):
 
         if not listings:
             await interaction.response.send_message("No listings to display", ephemeral=True)
+            return
 
-        mq = max(3, *(len(f"{int(l['quantity_available']):,}") for l in listings))
-        tq = max(3, *(len(l['title']) for l in listings))
-        pq = max(3, *(len(f"{int(l['price']):,}") for l in listings))
-
-        entries = []
-        for listing in listings:
-            entries.append(
-                f"\u001b[0;40;33m {int(listing['quantity_available']):>{mq},} \u001b[0;40;37m| \u001b[0;40;36m{listing['title']:<{tq}} \u001b[0;40;37m| \u001b[0;40;33m{int(listing['price']):>{pq},} \u001b[0;40;36maUEC "
-            )
-
-        pages = list(chunks(entries, 10))
-        header = f"\u001b[4;40;37m {'Qt.':<{mq}} | {'Item':<{tq}} | {'Price':>{pq + 5}} "
-        for page in pages:
-            page.insert(0, header)
-        embeds = [create_stock_embed(page) for page in pages]
-        paginator = ButtonPaginator(embeds, author_id=interaction.user.id)
-        await paginator.send(interaction)
+        await display_listings_compact(interaction, listings)
 
     @set_stock.autocomplete('listing')
     @add_stock.autocomplete('listing')
