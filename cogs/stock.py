@@ -17,7 +17,7 @@ def create_stock_embed(entries: List[str]):
     embed = discord.Embed(url=f"https://sc-market.space/market/manage?quantityAvailable=0",
                           title="My Stock")
     body = '\n'.join(entries)
-    embed.description = f"""```js\n{body}\n```"""
+    embed.description = f"""```ansi\n{body}\n```"""
     embed.timestamp = datetime.now()
 
     return embed
@@ -112,10 +112,10 @@ class stock(commands.GroupCog):
     async def view_stock(
             self,
             interaction: discord.Interaction,
-            owner: str,
+            owner: str = None,
     ):
         """Set the stock quantity for a given market listing"""
-        if interaction.namespace.owner != "_ME":
+        if owner and interaction.namespace.owner != "_ME":
             owner = json.loads(interaction.namespace.owner)
             listings = await get_org_listings(owner['s'], interaction.user.id,
                                               session=self.bot.session)
@@ -125,15 +125,20 @@ class stock(commands.GroupCog):
         if not listings:
             await interaction.response.send_message("No listings to display", ephemeral=True)
 
-        mq = max(3, len(str(max(listings, key=lambda l: int(l['quantity_available']))['quantity_available'])))
+        mq = max(3, *(len(f"{int(l['quantity_available']):,}") for l in listings))
+        tq = max(3, *(len(l['title']) for l in listings))
+        pq = max(3, *(len(f"{int(l['price']):,}") for l in listings))
 
         entries = []
         for listing in listings:
-            entries.append(f"{listing['quantity_available']:<{mq}} {listing['title']}")
+            entries.append(
+                f"\u001b[0;40;33m {int(listing['quantity_available']):>{mq},} \u001b[0;40;37m| \u001b[0;40;36m{listing['title']:<{tq}} \u001b[0;40;37m| \u001b[0;40;33m{int(listing['price']):>{pq},} \u001b[0;40;36maUEC "
+            )
 
         pages = list(chunks(entries, 10))
+        header = f"\u001b[4;40;37m {'Qt.':<{mq}} | {'Item':<{tq}} | {'Price':>{pq + 5}} "
         for page in pages:
-            page.insert(0, f"{'Qt.':<{mq}} Item")
+            page.insert(0, header)
         embeds = [create_stock_embed(page) for page in pages]
         paginator = ButtonPaginator(embeds, author_id=interaction.user.id)
         await paginator.send(interaction)
