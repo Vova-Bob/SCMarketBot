@@ -165,7 +165,7 @@ class SCMarket(Bot):
         except Exception as e:
             traceback.print_exc()
 
-    async def create_thread(self, server_id: int, channel_id: int, members: list[int], order: dict):
+    async def create_thread(self, server_id: int, channel_id: int, members: list[int], offer: dict):
         if not server_id or not channel_id or not members:
             return
 
@@ -178,7 +178,7 @@ class SCMarket(Bot):
             return
 
         thread = await channel.create_thread(
-            name=f"order-{order['order_id'][:8]}",
+            name=f"offer-{offer['id'][:8]}",
             type=ChannelType.private_thread
         )
 
