@@ -162,4 +162,4 @@ class stock(commands.GroupCog):
                                 value=json.dumps(dict(s=org['spectrum_id'], n=org['name'])))
             for org in orgs if
             current.lower() in org['name'].lower() or current.lower() in org['spectrum_id'].lower()
-        ] + [app_commands.Choice(name=f"Me", value='_ME')]
+        ][:24] + [app_commands.Choice(name=f"Me", value='_ME')]

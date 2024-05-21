@@ -173,8 +173,11 @@ class SCMarket(Bot):
         if not guild:
             return
 
-        channel: discord.TextChannel = await guild.fetch_channel(int(channel_id))
-        if not channel:
+        try:
+            channel: discord.TextChannel = await guild.fetch_channel(int(channel_id))
+            if not channel:
+                return
+        except discord.InvalidData:
             return
 
         thread = await channel.create_thread(
@@ -204,12 +207,13 @@ class SCMarket(Bot):
                     user = await self.fetch_user(int(member))
                     try:
                         await user.send(
-                            f"You placed an order:\n\n```{order['description']}```\n\nPlease join this server to work with the seller to complete your order: {invite}"
+                            f"You submitted an offer on SC Market. Please join the fulfillment server to "
+                            f"communicate directly with the seller: {invite}"
                         )
-                    except:
-                        pass
-            except:
-                pass
+                    except Exception as e:
+                        print(e, offer)
+            except Exception as e:
+                print(e)
 
         return dict(thread_id=str(thread.id), failed=failed, invite_code=str(invite) if invite else None)
 
