@@ -25,7 +25,6 @@ logger.setLevel(logging.DEBUG)
 
 
 class SCMarket(Bot):
-    thread_ids = []
     session = None
 
     async def setup_hook(self):
@@ -53,7 +52,7 @@ class SCMarket(Bot):
         print(*args, kwargs)
 
     async def on_message(self, message):
-        if isinstance(message.channel, discord.Thread) and message.channel.id in self.thread_ids:
+        if isinstance(message.channel, discord.Thread):
             if not message.author.bot and message.content:
                 async with self.session.post(
                         f'{DISCORD_BACKEND_URL}/threads/message',
@@ -65,20 +64,6 @@ class SCMarket(Bot):
                         )
                 ) as resp:
                     pass
-
-    async def fetch_threads(self):
-        while True:
-            for i in range(3):
-                try:
-                    async with self.session.get(
-                            f'{DISCORD_BACKEND_URL}/threads/all'
-                    ) as resp:
-                        result = await resp.json()
-                        self.thread_ids = list(map(int, result['thread_ids']))
-                        break
-                except Exception as e:
-                    traceback.print_exc()
-            await asyncio.sleep(86400)
 
     async def order_placed(self, body):
         try:
@@ -184,8 +169,6 @@ class SCMarket(Bot):
             name=f"offer-{offer['id'][:8]}",
             type=ChannelType.private_thread
         )
-
-        self.thread_ids.append(thread.id)
 
         await thread.add_user(self.user)
 
