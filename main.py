@@ -51,6 +51,7 @@ class SCMarket(Bot):
         print(*args, kwargs)
 
     async def on_message(self, message):
+        print(message)
         if isinstance(message.channel, discord.Thread):
             if not message.author.bot and message.content:
                 async with self.session.post(
@@ -62,7 +63,7 @@ class SCMarket(Bot):
                             content=message.content,
                         )
                 ) as resp:
-                    pass
+                    print(await resp.read())
 
     async def order_placed(self, body):
         try:
