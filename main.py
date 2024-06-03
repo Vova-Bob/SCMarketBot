@@ -42,7 +42,6 @@ class SCMarket(Bot):
         self.loop.create_task(site.start())
 
         self.session = aiohttp.ClientSession()
-        self.loop.create_task(self.fetch_threads())
         logger.info("Ready!")
 
     async def on_command_error(self, interaction, error):
