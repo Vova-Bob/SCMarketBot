@@ -1,4 +1,3 @@
-import asyncio
 import logging
 import os
 import traceback
@@ -83,6 +82,9 @@ class SCMarket(Bot):
             else:
                 invite = None
 
+            if not thread:
+                thread = dict(thread_id=None, failed=True, invite_code=str(invite) if invite else None)
+
             return dict(thread=thread, invite_code=invite)
         except:
             traceback.print_exc()
@@ -158,10 +160,12 @@ class SCMarket(Bot):
             return
 
         try:
-            channel: discord.TextChannel = await guild.fetch_channel(int(channel_id))
+            channel = guild.get_channel(int(channel_id))
+            if not channel:
+                channel: discord.TextChannel = await guild.fetch_channel(int(channel_id))
             if not channel:
                 return
-        except discord.InvalidData:
+        except (discord.InvalidData, discord.Forbidden):
             return
 
         thread = await channel.create_thread(

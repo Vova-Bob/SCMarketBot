@@ -70,6 +70,8 @@ class Lookup(commands.Cog):
         )
 
         embeds = [create_market_embed(item) for item in result['listings'] if item['listing']['quantity_available']]
+        if not embeds:
+            await interaction.response.send_message("No results found")
 
         paginator = ButtonPaginator(embeds, author_id=interaction.user.id)
         await paginator.send(interaction)
