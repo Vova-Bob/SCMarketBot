@@ -168,8 +168,10 @@ class SCMarket(Bot):
         except (discord.InvalidData, discord.Forbidden):
             return
 
+        is_order = offer.get("order_id")
+
         thread = await channel.create_thread(
-            name=f"offer-{offer['id'][:8]}",
+            name=f"{'order' if is_order else 'offer'}-{offer.get('id', offer.get('order_id'))[:8]}",
             type=ChannelType.private_thread
         )
 
