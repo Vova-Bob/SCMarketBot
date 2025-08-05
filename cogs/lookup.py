@@ -21,15 +21,36 @@ class Lookup(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @app_commands.command(name="search")
+    @app_commands.command(
+        name=t("commands.lookup.search.name"),
+        description=t("commands.lookup.search.description"),
+    )
     @app_commands.describe(
-        query='The search query',
-        category='What category the item belongs to',
-        sorting='What order to sort the listings by',
-        sale_type='The method of sale',
-        quantity_available='The minimum quantity available an item must have',
-        min_cost='The minimum cost of items to search',
-        max_cost='The maximum cost of items to search',
+        query=app_commands.locale_str("The search query", uk="Пошуковий запит"),
+        category=app_commands.locale_str(
+            "What category the item belongs to",
+            uk="Категорія, до якої належить предмет",
+        ),
+        sorting=app_commands.locale_str(
+            "What order to sort the listings by",
+            uk="Порядок сортування оголошень",
+        ),
+        sale_type=app_commands.locale_str(
+            "The method of sale",
+            uk="Метод продажу",
+        ),
+        quantity_available=app_commands.locale_str(
+            "The minimum quantity available an item must have",
+            uk="Мінімальна доступна кількість предмета",
+        ),
+        min_cost=app_commands.locale_str(
+            "The minimum cost of items to search",
+            uk="Мінімальна ціна для пошуку",
+        ),
+        max_cost=app_commands.locale_str(
+            "The maximum cost of items to search",
+            uk="Максимальна ціна для пошуку",
+        ),
     )
     @app_commands.choices(
         category=[
@@ -91,11 +112,22 @@ class Lookup(commands.Cog):
         paginator = ButtonPaginator(embeds, author_id=interaction.user.id)
         await paginator.send(interaction)
 
-    lookup = app_commands.Group(name="lookup", description="Look up an org or user's market listings")
+    search.name_localizations = {"uk": t("commands.lookup.search.name", "uk")}
+    search.description_localizations = {"uk": t("commands.lookup.search.description", "uk")}
 
-    @lookup.command(name="user")
+    lookup = app_commands.Group(
+        name=t("commands.lookup.group.name"),
+        description=t("commands.lookup.group.description"),
+    )
+    lookup.name_localizations = {"uk": t("commands.lookup.group.name", "uk")}
+    lookup.description_localizations = {"uk": t("commands.lookup.group.description", "uk")}
+
+    @lookup.command(
+        name=t("commands.lookup.user.name"),
+        description=t("commands.lookup.user.description"),
+    )
     @app_commands.describe(
-        handle='The handle of the user',
+        handle=app_commands.locale_str("The handle of the user", uk="Ім'я користувача"),
     )
     async def user_search(
             self,
@@ -130,9 +162,18 @@ class Lookup(commands.Cog):
             paginator = ButtonPaginator(embeds, author_id=interaction.user.id)
             await paginator.send(interaction)
 
-    @lookup.command(name="org")
+    user_search.name_localizations = {"uk": t("commands.lookup.user.name", "uk")}
+    user_search.description_localizations = {"uk": t("commands.lookup.user.description", "uk")}
+
+    @lookup.command(
+        name=t("commands.lookup.org.name"),
+        description=t("commands.lookup.org.description"),
+    )
     @app_commands.describe(
-        spectrum_id='The spectrum ID of the org',
+        spectrum_id=app_commands.locale_str(
+            "The spectrum ID of the org",
+            uk="Spectrum ID організації",
+        ),
     )
     async def org_search(
             self,
@@ -166,6 +207,9 @@ class Lookup(commands.Cog):
 
             paginator = ButtonPaginator(embeds, author_id=interaction.user.id)
             await paginator.send(interaction)
+
+    org_search.name_localizations = {"uk": t("commands.lookup.org.name", "uk")}
+    org_search.description_localizations = {"uk": t("commands.lookup.org.description", "uk")}
 
     @user_search.autocomplete('handle')
     async def autocomplete_get_users(

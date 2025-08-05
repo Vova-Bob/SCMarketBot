@@ -56,19 +56,52 @@ class Locale(commands.Cog):
             return
 
         view = LocaleView(interaction.user.id)
-        await interaction.response.send_message("Select a language:", view=view, ephemeral=True)
+        locale = str(interaction.locale).split("-")[0] if interaction.locale else "en"
+        await interaction.response.send_message(
+            t("locale.select_language", locale), view=view, ephemeral=True
+        )
 
-    @app_commands.command(name="setlanguage")
-    @app_commands.describe(code="Locale code, e.g. 'en' or 'uk'")
+    @app_commands.command(
+        name=t("commands.locale.setlanguage.name"),
+        description=t("commands.locale.setlanguage.description"),
+    )
+    @app_commands.describe(
+        code=app_commands.locale_str(
+            "Locale code, e.g. 'en' or 'uk'",
+            uk="Код мови, напр. 'en' або 'uk'",
+        )
+    )
     async def setlanguage(self, interaction: discord.Interaction, code: str | None = None):
         """Set the preferred language for this user."""
         await self._set_language(interaction, code)
 
-    @app_commands.command(name="language")
-    @app_commands.describe(code="Locale code, e.g. 'en' or 'uk'")
+    setlanguage.name_localizations = {
+        "uk": t("commands.locale.setlanguage.name", "uk")
+    }
+    setlanguage.description_localizations = {
+        "uk": t("commands.locale.setlanguage.description", "uk")
+    }
+
+    @app_commands.command(
+        name=t("commands.locale.language.name"),
+        description=t("commands.locale.language.description"),
+    )
+    @app_commands.describe(
+        code=app_commands.locale_str(
+            "Locale code, e.g. 'en' or 'uk'",
+            uk="Код мови, напр. 'en' або 'uk'",
+        )
+    )
     async def language(self, interaction: discord.Interaction, code: str | None = None):
         """Alias for setlanguage."""
         await self._set_language(interaction, code)
+
+    language.name_localizations = {
+        "uk": t("commands.locale.language.name", "uk")
+    }
+    language.description_localizations = {
+        "uk": t("commands.locale.language.description", "uk")
+    }
 
 
 async def setup(bot):

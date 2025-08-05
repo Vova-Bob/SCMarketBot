@@ -11,14 +11,30 @@ from util.fetch import internal_post, get_user_orders
 from util.i18n import t, get_locale
 
 
-class order(commands.GroupCog):
+class order(
+    commands.GroupCog,
+    name=t("commands.order.group.name"),
+    description=t("commands.order.group.description"),
+):
     def __init__(self, bot):
         self.bot = bot
+        self.__cog_app_commands_group__.name_localizations = {
+            "uk": t("commands.order.group.name", "uk")
+        }
+        self.__cog_app_commands_group__.description_localizations = {
+            "uk": t("commands.order.group.description", "uk")
+        }
 
-    @app_commands.command(name="status")
+    @app_commands.command(
+        name=t("commands.order.status.name"),
+        description=t("commands.order.status.description"),
+    )
     @app_commands.describe(
-        order='The order to update',
-        newstatus='The new status to set the order to',
+        order=app_commands.locale_str("The order to update", uk="Замовлення для оновлення"),
+        newstatus=app_commands.locale_str(
+            "The new status to set the order to",
+            uk="Новий статус замовлення",
+        ),
     )
     @app_commands.choices(
         newstatus=[
@@ -72,6 +88,13 @@ class order(commands.GroupCog):
                 )
             else:
                 await interaction.response.send_message(t("order.update_success", locale))
+
+    update_status.name_localizations = {
+        "uk": t("commands.order.status.name", "uk")
+    }
+    update_status.description_localizations = {
+        "uk": t("commands.order.status.description", "uk")
+    }
 
     @update_status.autocomplete('order')
     async def update_status_order_autocomplete(
