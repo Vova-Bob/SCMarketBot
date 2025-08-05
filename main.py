@@ -8,6 +8,10 @@ from aiohttp import web
 from discord import ChannelType
 from discord.ext.commands import Bot
 
+from util.i18n import load_translations, t
+
+load_translations()
+
 from cogs.admin import Admin
 from cogs.lookup import Lookup
 from cogs.order import order
@@ -158,11 +162,11 @@ class SCMarket(Bot):
 
     async def create_thread(self, server_id: int, channel_id: int, members: list[int], offer: dict):
         if not server_id or not channel_id or not members:
-            return Result(error="Server or Channel or Members are not configured")
+            return Result(error=t("main.error.not_configured"))
 
         guild: discord.Guild = await self.fetch_guild(int(server_id))
         if not guild:
-            return Result(error="Bot is not in the configured guild")
+            return Result(error=t("main.error.not_in_guild"))
 
         try:
             channel = guild.get_channel(int(channel_id))
@@ -172,11 +176,11 @@ class SCMarket(Bot):
                 except discord.NotFound:
                     pass
             if not channel:
-                return Result(error="The configured thread channel no longer exists")
+                return Result(error=t("main.error.channel_missing"))
         except discord.Forbidden:
-            return Result(error="The bot does not have permission to view the configured thread channel")
+            return Result(error=t("main.error.no_view_permission"))
         except discord.InvalidData:
-            return Result(error="The bot received invalid data from Discord when attempting to fetch the configured thread channel")
+            return Result(error=t("main.error.invalid_data"))
 
         is_order = offer.get("order_id")
 
@@ -186,7 +190,7 @@ class SCMarket(Bot):
                 type=ChannelType.private_thread
             )
         except:
-            return Result(error="The bot does not have permission to create threads in the configured channel")
+            return Result(error=t("main.error.no_create_permission"))
 
         await thread.add_user(self.user)
 
@@ -207,10 +211,7 @@ class SCMarket(Bot):
                 for member in failed:
                     user = await self.fetch_user(int(member))
                     try:
-                        await user.send(
-                            f"You submitted an offer on SC Market. Please join the fulfillment server to "
-                            f"communicate directly with the seller: {invite}"
-                        )
+                        await user.send(t("main.dm.offer").format(invite=invite))
                     except Exception as e:
                         print(e, offer)
             except Exception as e:

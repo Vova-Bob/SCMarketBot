@@ -6,6 +6,7 @@ from discord.ext import commands
 from discord.ext.paginators.button_paginator import ButtonPaginator
 
 from util.fetch import public_fetch, search_users, search_orgs
+from util.i18n import t
 from util.listings import create_market_embed, categories, sorting_methods, sale_types, create_market_embed_individual, \
     display_listings_compact
 
@@ -71,7 +72,7 @@ class Lookup(commands.Cog):
 
         embeds = [create_market_embed(item) for item in result['listings'] if item['listing']['quantity_available']]
         if not embeds:
-            await interaction.response.send_message("No results found")
+            await interaction.response.send_message(t("lookup.no_results"))
 
         paginator = ButtonPaginator(embeds, author_id=interaction.user.id)
         await paginator.send(interaction)
@@ -95,7 +96,7 @@ class Lookup(commands.Cog):
                 session=self.bot.session,
             )
         except:
-            await interaction.response.send_message("Invalid user")
+            await interaction.response.send_message(t("lookup.invalid_user"))
             return
 
         if compact:
@@ -105,7 +106,7 @@ class Lookup(commands.Cog):
                       item['listing']['quantity_available']]
 
             if not embeds:
-                await interaction.response.send_message("No listings to display for org")
+                await interaction.response.send_message(t("lookup.no_listings_org"))
                 return
 
             paginator = ButtonPaginator(embeds, author_id=interaction.user.id)
@@ -128,7 +129,7 @@ class Lookup(commands.Cog):
                 session=self.bot.session,
             )
         except:
-            await interaction.response.send_message("Invalid org")
+            await interaction.response.send_message(t("lookup.invalid_org"))
             return
 
         if compact:
@@ -138,7 +139,7 @@ class Lookup(commands.Cog):
                       item['listing']['quantity_available']]
 
             if not embeds:
-                await interaction.response.send_message("No listings to display for org")
+                await interaction.response.send_message(t("lookup.no_listings_org"))
                 return
 
             paginator = ButtonPaginator(embeds, author_id=interaction.user.id)

@@ -8,6 +8,8 @@ from discord import app_commands
 from discord.app_commands import checks
 from discord.ext import commands
 
+from util.i18n import t
+
 DISCORD_BACKEND_URL = os.environ.get("DISCORD_BACKEND_URL", "http://web:8081")
 
 
@@ -75,10 +77,21 @@ class Registration(commands.GroupCog, name="register"):
                 except Exception as e:
                     traceback.print_exc()
                     print(text)
-                    return await interaction.response.send_message("An unexpected error occurred", ephemeral=True)
+                    return await interaction.response.send_message(t("registration.error.unexpected"), ephemeral=True)
 
         if resp.ok:
-            await interaction.response.send_message(f"Registered {type} for {entity}", ephemeral=True)
+            await interaction.response.send_message(
+                t("registration.success").format(
+                    type=t(f"registration.type.{type}"),
+                    entity=t(f"registration.entity.{entity}"),
+                ),
+                ephemeral=True,
+            )
         else:
-            await interaction.response.send_message(f"Failed to register channel: {result.get('error')}",
-                                                    ephemeral=True)
+            await interaction.response.send_message(
+                t("registration.fail").format(
+                    type=t(f"registration.type.{type}"),
+                    error=result.get('error'),
+                ),
+                ephemeral=True,
+            )

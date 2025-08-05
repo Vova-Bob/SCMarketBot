@@ -8,6 +8,7 @@ from discord import app_commands
 from discord.ext import commands
 
 from util.fetch import internal_post, get_user_orders
+from util.i18n import t
 
 
 class order(commands.GroupCog):
@@ -21,8 +22,9 @@ class order(commands.GroupCog):
     )
     @app_commands.choices(
         newstatus=[
-            app_commands.Choice(name=name, value=value) for name, value in
-            [("Fulfilled", "fulfilled"), ("In Progress", "in-progress"), ("Cancelled", "cancelled")]
+            app_commands.Choice(name=t("order.status.fulfilled"), value="fulfilled"),
+            app_commands.Choice(name=t("order.status.in_progress"), value="in-progress"),
+            app_commands.Choice(name=t("order.status.cancelled"), value="cancelled"),
         ],
     )
     async def update_status(
@@ -43,7 +45,7 @@ class order(commands.GroupCog):
                                                },
                                                session=self.bot.session)
             else:
-                await interaction.response.send_message("No order in this channel. Please select an order to update.")
+                await interaction.response.send_message(t("order.no_order"))
                 return
         else:
             response = await internal_post(
@@ -61,10 +63,14 @@ class order(commands.GroupCog):
         else:
             if order:
                 await interaction.response.send_message(
-                    f"Successfully updated the status to {newstatus} for order '[{order_payload['t']}](<https://sc-market.space/contract/{order_payload['o']}>)'"
+                    t("order.update_success_with_title").format(
+                        status=t(f"order.status.{newstatus.replace('-', '_')}") ,
+                        title=order_payload['t'],
+                        order_id=order_payload['o'],
+                    )
                 )
             else:
-                await interaction.response.send_message(f"Successfully updated status for the order")
+                await interaction.response.send_message(t("order.update_success"))
 
     @update_status.autocomplete('order')
     async def update_status_order_autocomplete(
