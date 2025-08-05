@@ -10,5 +10,7 @@
   "no_listings_org": "Немає оголошень для організації",
   "no_order": "У цьому каналі немає замовлення. Виберіть замовлення для оновлення.",
   "status_updated": "Статус замовлення успішно оновлено",
-  "status_updated_specific": "Статус успішно оновлено на {status} для замовлення '{title}'"
+  "status_updated_specific": "Статус успішно оновлено на {status} для замовлення '{title}'",
+  "language_set": "Мову встановлено на {locale}",
+  "language_current": "Ваша поточна мова {locale}"
 }
