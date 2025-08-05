@@ -4,7 +4,7 @@ import discord
 from discord import app_commands
 from discord.ext import commands
 
-from util.i18n import t, get_locale
+from util.i18n import t, get_locale, TRANSLATIONS
 
 
 class Admin(commands.Cog):
@@ -12,8 +12,8 @@ class Admin(commands.Cog):
         self.bot = bot
 
     @app_commands.command(
-        name=t("commands.admin.info.name"),
-        description=t("commands.admin.info.description"),
+        name=lambda locale: t("commands.admin.info.name", locale),  # "commands.admin.info.name"
+        description=lambda locale: t("commands.admin.info.description", locale),  # "commands.admin.info.description"
     )
     async def info(self, interaction: discord.Interaction):
         """Some simple details about the bot."""
@@ -44,5 +44,10 @@ class Admin(commands.Cog):
         embed.set_thumbnail(url=self.bot.user.display_avatar.url)
         await interaction.response.send_message(embed=embed, ephemeral=True)
 
-    info.name_localizations = {"uk": t("commands.admin.info.name", "uk")}
-    info.description_localizations = {"uk": t("commands.admin.info.description", "uk")}
+    info.name_localizations = {
+        loc: t("commands.admin.info.name", loc) for loc in TRANSLATIONS
+    }
+    info.description_localizations = {
+        loc: t("commands.admin.info.description", loc) for loc in TRANSLATIONS
+    }
+    # "commands.admin.info.<parameter>" - translation keys for future parameter descriptions
