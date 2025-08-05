@@ -2,7 +2,7 @@ import discord
 from discord import app_commands
 from discord.ext import commands
 
-from util.i18n import TRANSLATIONS, set_locale, t
+from util.i18n import TRANSLATIONS, set_locale, t, get_locale
 
 
 class LocaleView(discord.ui.View):
@@ -42,7 +42,7 @@ class Locale(commands.Cog):
         if code:
             code = code.lower()
             if code not in TRANSLATIONS:
-                locale = str(interaction.locale).split("-")[0] if interaction.locale else "en"
+                locale = get_locale(interaction.user.id, interaction)
                 await interaction.response.send_message(
                     t("locale.set.invalid", locale).format(locale=code),
                     ephemeral=True,
@@ -56,7 +56,7 @@ class Locale(commands.Cog):
             return
 
         view = LocaleView(interaction.user.id)
-        locale = str(interaction.locale).split("-")[0] if interaction.locale else "en"
+        locale = get_locale(interaction.user.id, interaction)
         await interaction.response.send_message(
             t("locale.select_language", locale), view=view, ephemeral=True
         )
