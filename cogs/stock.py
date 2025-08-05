@@ -8,37 +8,40 @@ from discord import app_commands
 from discord.ext import commands
 
 from util.fetch import internal_post, get_user_listings, get_user_orgs, get_org_listings
-from util.i18n import t, get_locale
+from util.i18n import t, get_locale, TRANSLATIONS
 from util.listings import display_listings_compact
 
 
 class stock(
     commands.GroupCog,
-    name=t("commands.stock.group.name"),
-    description=t("commands.stock.group.description"),
+    name=lambda locale: t("commands.stock.group.name", locale),
+    description=lambda locale: t("commands.stock.group.description", locale),
 ):
     def __init__(self, bot):
         self.bot = bot
         self.__cog_app_commands_group__.name_localizations = {
-            "uk": t("commands.stock.group.name", "uk")
+            loc: t("commands.stock.group.name", loc) for loc in TRANSLATIONS
         }
         self.__cog_app_commands_group__.description_localizations = {
-            "uk": t("commands.stock.group.description", "uk")
+            loc: t("commands.stock.group.description", loc) for loc in TRANSLATIONS
         }
 
     @app_commands.command(
-        name=t("commands.stock.set.name"),
-        description=t("commands.stock.set.description"),
+        name=lambda locale: t("commands.stock.set.name", locale),
+        description=lambda locale: t("commands.stock.set.description", locale),
     )
     @app_commands.describe(
         owner=app_commands.locale_str(
-            "The owner of the listing you want to update. Either you or one of your contractors",
-            uk="Власник оголошення, яке потрібно оновити. Ви або ваш підрядник",
+            t("commands.stock.set.owner", "en"),
+            **{loc: t("commands.stock.set.owner", loc) for loc in TRANSLATIONS},
         ),
-        listing=app_commands.locale_str("The listing to modify", uk="Оголошення для змін"),
+        listing=app_commands.locale_str(
+            t("commands.stock.set.listing", "en"),
+            **{loc: t("commands.stock.set.listing", loc) for loc in TRANSLATIONS},
+        ),
         quantity=app_commands.locale_str(
-            "The new quantity to set for the listing",
-            uk="Нова кількість для оголошення",
+            t("commands.stock.set.quantity", "en"),
+            **{loc: t("commands.stock.set.quantity", loc) for loc in TRANSLATIONS},
         ),
     )
     async def set_stock(
@@ -51,24 +54,29 @@ class stock(
         """Set the stock quantity for a given market listing"""
         await self.handle_stock_change(interaction, 'set', owner, listing, quantity)
 
-    set_stock.name_localizations = {"uk": t("commands.stock.set.name", "uk")}
+    set_stock.name_localizations = {
+        loc: t("commands.stock.set.name", loc) for loc in TRANSLATIONS
+    }
     set_stock.description_localizations = {
-        "uk": t("commands.stock.set.description", "uk")
+        loc: t("commands.stock.set.description", loc) for loc in TRANSLATIONS
     }
 
     @app_commands.command(
-        name=t("commands.stock.add.name"),
-        description=t("commands.stock.add.description"),
+        name=lambda locale: t("commands.stock.add.name", locale),
+        description=lambda locale: t("commands.stock.add.description", locale),
     )
     @app_commands.describe(
         owner=app_commands.locale_str(
-            "The owner of the listing you want to update. Either you or one of your contractors",
-            uk="Власник оголошення, яке потрібно оновити. Ви або ваш підрядник",
+            t("commands.stock.add.owner", "en"),
+            **{loc: t("commands.stock.add.owner", loc) for loc in TRANSLATIONS},
         ),
-        listing=app_commands.locale_str("The listing to modify", uk="Оголошення для змін"),
+        listing=app_commands.locale_str(
+            t("commands.stock.add.listing", "en"),
+            **{loc: t("commands.stock.add.listing", loc) for loc in TRANSLATIONS},
+        ),
         quantity=app_commands.locale_str(
-            "The quantity to add to the listings stock",
-            uk="Кількість, яку додати до запасу",
+            t("commands.stock.add.quantity", "en"),
+            **{loc: t("commands.stock.add.quantity", loc) for loc in TRANSLATIONS},
         ),
     )
     async def add_stock(
@@ -81,24 +89,29 @@ class stock(
         """Add to the stock quantity for a given market listing"""
         await self.handle_stock_change(interaction, 'add', owner, listing, quantity)
 
-    add_stock.name_localizations = {"uk": t("commands.stock.add.name", "uk")}
+    add_stock.name_localizations = {
+        loc: t("commands.stock.add.name", loc) for loc in TRANSLATIONS
+    }
     add_stock.description_localizations = {
-        "uk": t("commands.stock.add.description", "uk")
+        loc: t("commands.stock.add.description", loc) for loc in TRANSLATIONS
     }
 
     @app_commands.command(
-        name=t("commands.stock.sub.name"),
-        description=t("commands.stock.sub.description"),
+        name=lambda locale: t("commands.stock.sub.name", locale),
+        description=lambda locale: t("commands.stock.sub.description", locale),
     )
     @app_commands.describe(
         owner=app_commands.locale_str(
-            "The owner of the listing you want to update. Either you or one of your contractors",
-            uk="Власник оголошення, яке потрібно оновити. Ви або ваш підрядник",
+            t("commands.stock.sub.owner", "en"),
+            **{loc: t("commands.stock.sub.owner", loc) for loc in TRANSLATIONS},
         ),
-        listing=app_commands.locale_str("The listing to modify", uk="Оголошення для змін"),
+        listing=app_commands.locale_str(
+            t("commands.stock.sub.listing", "en"),
+            **{loc: t("commands.stock.sub.listing", loc) for loc in TRANSLATIONS},
+        ),
         quantity=app_commands.locale_str(
-            "The quantity to subtract from the listings stock",
-            uk="Кількість, яку відняти із запасу",
+            t("commands.stock.sub.quantity", "en"),
+            **{loc: t("commands.stock.sub.quantity", loc) for loc in TRANSLATIONS},
         ),
     )
     async def sub_stock(
@@ -111,9 +124,11 @@ class stock(
         """Subtract from the stock quantity for a given market listing"""
         await self.handle_stock_change(interaction, 'sub', owner, listing, quantity)
 
-    sub_stock.name_localizations = {"uk": t("commands.stock.sub.name", "uk")}
+    sub_stock.name_localizations = {
+        loc: t("commands.stock.sub.name", loc) for loc in TRANSLATIONS
+    }
     sub_stock.description_localizations = {
-        "uk": t("commands.stock.sub.description", "uk")
+        loc: t("commands.stock.sub.description", loc) for loc in TRANSLATIONS
     }
 
     async def handle_stock_change(self, interaction: discord.Interaction, action: str, owner: str, listing: str,
@@ -153,13 +168,13 @@ class stock(
             )
 
     @app_commands.command(
-        name=t("commands.stock.view.name"),
-        description=t("commands.stock.view.description"),
+        name=lambda locale: t("commands.stock.view.name", locale),
+        description=lambda locale: t("commands.stock.view.description", locale),
     )
     @app_commands.describe(
         owner=app_commands.locale_str(
-            "The owner of the listing you want to update. Either you or one of your contractors",
-            uk="Власник оголошення, яке потрібно оновити. Ви або ваш підрядник",
+            t("commands.stock.view.owner", "en"),
+            **{loc: t("commands.stock.view.owner", loc) for loc in TRANSLATIONS},
         ),
     )
     async def view_stock(
@@ -182,9 +197,11 @@ class stock(
 
         await display_listings_compact(interaction, listings)
 
-    view_stock.name_localizations = {"uk": t("commands.stock.view.name", "uk")}
+    view_stock.name_localizations = {
+        loc: t("commands.stock.view.name", loc) for loc in TRANSLATIONS
+    }
     view_stock.description_localizations = {
-        "uk": t("commands.stock.view.description", "uk")
+        loc: t("commands.stock.view.description", loc) for loc in TRANSLATIONS
     }
 
     @set_stock.autocomplete('listing')
@@ -230,11 +247,15 @@ class stock(
         locale = get_locale(interaction.user.id, interaction)
         orgs = await get_user_orgs(interaction.user.id, session=self.bot.session)
 
-        return [
+        choices = [
             app_commands.Choice(
                 name=f"{org['name']} ({org['spectrum_id']})",
                 value=json.dumps(dict(s=org['spectrum_id'], n=org['name']))
             )
             for org in orgs
             if current.lower() in org['name'].lower() or current.lower() in org['spectrum_id'].lower()
-        ][:24] + [app_commands.Choice(name=t('stock.me', locale), value='_ME')]
+        ][:24]
+
+        me_choice = app_commands.Choice(name=t('stock.me', locale), value='_ME')
+        me_choice.name_localizations = {loc: t('stock.me', loc) for loc in TRANSLATIONS}
+        return choices + [me_choice]
