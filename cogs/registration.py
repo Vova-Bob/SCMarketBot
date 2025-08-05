@@ -8,7 +8,7 @@ from discord import app_commands
 from discord.app_commands import checks
 from discord.ext import commands
 
-from util.i18n import t
+from util.i18n import t, get_locale
 
 DISCORD_BACKEND_URL = os.environ.get("DISCORD_BACKEND_URL", "http://web:8081")
 
@@ -60,6 +60,7 @@ class Registration(commands.GroupCog, name="register"):
 
     @staticmethod
     async def register(interaction, type, entity, name=""):
+        locale = get_locale(interaction.user.id, interaction)
         async with aiohttp.ClientSession() as session:
             payload = dict(
                 discord_id=str(interaction.user.id),
@@ -77,20 +78,23 @@ class Registration(commands.GroupCog, name="register"):
                 except Exception as e:
                     traceback.print_exc()
                     print(text)
-                    return await interaction.response.send_message(t("registration.error.unexpected"), ephemeral=True)
+                    return await interaction.response.send_message(
+                        t("registration.error.unexpected", locale),
+                        ephemeral=True,
+                    )
 
         if resp.ok:
             await interaction.response.send_message(
-                t("registration.success").format(
-                    type=t(f"registration.type.{type}"),
-                    entity=t(f"registration.entity.{entity}"),
+                t("registration.success", locale).format(
+                    type=t(f"registration.type.{type}", locale),
+                    entity=t(f"registration.entity.{entity}", locale),
                 ),
                 ephemeral=True,
             )
         else:
             await interaction.response.send_message(
-                t("registration.fail").format(
-                    type=t(f"registration.type.{type}"),
+                t("registration.fail", locale).format(
+                    type=t(f"registration.type.{type}", locale),
                     error=result.get('error'),
                 ),
                 ephemeral=True,

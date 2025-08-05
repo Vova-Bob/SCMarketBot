@@ -8,7 +8,7 @@ from discord import app_commands
 from discord.ext import commands
 
 from util.fetch import internal_post, get_user_listings, get_user_orgs, get_org_listings
-from util.i18n import t
+from util.i18n import t, get_locale
 from util.listings import display_listings_compact
 
 
@@ -66,6 +66,7 @@ class stock(commands.GroupCog):
 
     async def handle_stock_change(self, interaction: discord.Interaction, action: str, owner: str, listing: str,
                                   quantity: int):
+        locale = get_locale(interaction.user.id, interaction)
         listing_payload = json.loads(listing)
         payload = {
             "quantity": quantity,
@@ -91,7 +92,7 @@ class stock(commands.GroupCog):
                 newquantity = quantity
 
             await interaction.response.send_message(
-                t("stock.updated").format(
+                t("stock.updated", locale).format(
                     title=listing_payload['t'],
                     listing_id=listing_payload['l'],
                     old=listing_payload['q'],
@@ -116,8 +117,9 @@ class stock(commands.GroupCog):
         else:
             listings = await get_user_listings(interaction.user.id, session=self.bot.session)
 
+        locale = get_locale(interaction.user.id, interaction)
         if not listings:
-            await interaction.response.send_message(t("stock.no_listings"), ephemeral=True)
+            await interaction.response.send_message(t("stock.no_listings", locale), ephemeral=True)
             return
 
         await display_listings_compact(interaction, listings)
@@ -130,6 +132,7 @@ class stock(commands.GroupCog):
             interaction: discord.Interaction,
             current: str,
     ) -> List[app_commands.Choice[str]]:
+        locale = get_locale(interaction.user.id, interaction)
         try:
             if interaction.namespace.owner != "_ME":
                 owner = json.loads(interaction.namespace.owner)
@@ -140,7 +143,7 @@ class stock(commands.GroupCog):
 
             choices = [
                           app_commands.Choice(
-                              name=f"{listing['title'][:100]} ({int(listing['quantity_available']):,} available)",
+                              name=f"{listing['title'][:100]} ({int(listing['quantity_available']):,} {t('stock.available', locale)})",
                               value=ujson.dumps(dict(l=listing['listing_id'], t=listing['title'],
                                                      q=int(listing['quantity_available'])))
                           )
@@ -161,11 +164,14 @@ class stock(commands.GroupCog):
             interaction: discord.Interaction,
             current: str,
     ) -> List[app_commands.Choice[str]]:
+        locale = get_locale(interaction.user.id, interaction)
         orgs = await get_user_orgs(interaction.user.id, session=self.bot.session)
 
         return [
-            app_commands.Choice(name=f"{org['name']} ({org['spectrum_id']})",
-                                value=json.dumps(dict(s=org['spectrum_id'], n=org['name'])))
-            for org in orgs if
-            current.lower() in org['name'].lower() or current.lower() in org['spectrum_id'].lower()
-        ][:24] + [app_commands.Choice(name=f"Me", value='_ME')]
+            app_commands.Choice(
+                name=f"{org['name']} ({org['spectrum_id']})",
+                value=json.dumps(dict(s=org['spectrum_id'], n=org['name']))
+            )
+            for org in orgs
+            if current.lower() in org['name'].lower() or current.lower() in org['spectrum_id'].lower()
+        ][:24] + [app_commands.Choice(name=t('stock.me', locale), value='_ME')]

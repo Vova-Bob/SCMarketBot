@@ -6,9 +6,15 @@ from discord.ext import commands
 from discord.ext.paginators.button_paginator import ButtonPaginator
 
 from util.fetch import public_fetch, search_users, search_orgs
-from util.i18n import t
-from util.listings import create_market_embed, categories, sorting_methods, sale_types, create_market_embed_individual, \
-    display_listings_compact
+from util.i18n import t, get_locale
+from util.listings import (
+    create_market_embed,
+    categories,
+    sorting_methods,
+    sale_types,
+    create_market_embed_individual,
+    display_listings_compact,
+)
 
 
 class Lookup(commands.Cog):
@@ -27,13 +33,16 @@ class Lookup(commands.Cog):
     )
     @app_commands.choices(
         category=[
-            app_commands.Choice(name=item, value=item.lower()) for item in categories
+            app_commands.Choice(name=t(name_key), value=value)
+            for value, name_key in categories.items()
         ],
         sorting=[
-            app_commands.Choice(name=value, value=key) for key, value in sorting_methods.items()
+            app_commands.Choice(name=t(name_key), value=key)
+            for key, name_key in sorting_methods.items()
         ],
         sale_type=[
-            app_commands.Choice(name=item, value=item.lower()) for item in sale_types
+            app_commands.Choice(name=t(name_key), value=value)
+            for value, name_key in sale_types.items()
         ],
     )
     async def search(
@@ -48,6 +57,7 @@ class Lookup(commands.Cog):
             max_cost: int = 0,
     ):
         """Search the site market listings"""
+        locale = get_locale(interaction.user.id, interaction)
         params = {
             'query': query,
             'sort': sorting,
@@ -70,9 +80,13 @@ class Lookup(commands.Cog):
             session=self.bot.session,
         )
 
-        embeds = [create_market_embed(item) for item in result['listings'] if item['listing']['quantity_available']]
+        embeds = [
+            create_market_embed(item, locale)
+            for item in result['listings']
+            if item['listing']['quantity_available']
+        ]
         if not embeds:
-            await interaction.response.send_message(t("lookup.no_results"))
+            await interaction.response.send_message(t("lookup.no_results", locale))
 
         paginator = ButtonPaginator(embeds, author_id=interaction.user.id)
         await paginator.send(interaction)
@@ -90,23 +104,27 @@ class Lookup(commands.Cog):
             compact: bool = False,
     ):
         """Lookup the market listings for a user"""
+        locale = get_locale(interaction.user.id, interaction)
         try:
             listings = await public_fetch(
                 f"/market/user/{handle}",
                 session=self.bot.session,
             )
         except:
-            await interaction.response.send_message(t("lookup.invalid_user"))
+            await interaction.response.send_message(t("lookup.invalid_user", locale))
             return
 
         if compact:
             await display_listings_compact(interaction, [{**l['details'], **l['listing']} for l in listings])
         else:
-            embeds = [create_market_embed_individual(item) for item in listings if
-                      item['listing']['quantity_available']]
+            embeds = [
+                create_market_embed_individual(item, locale)
+                for item in listings
+                if item['listing']['quantity_available']
+            ]
 
             if not embeds:
-                await interaction.response.send_message(t("lookup.no_listings_org"))
+                await interaction.response.send_message(t("lookup.no_listings_org", locale))
                 return
 
             paginator = ButtonPaginator(embeds, author_id=interaction.user.id)
@@ -123,23 +141,27 @@ class Lookup(commands.Cog):
             compact: bool = False,
     ):
         """Lookup the market listings for an org"""
+        locale = get_locale(interaction.user.id, interaction)
         try:
             listings = await public_fetch(
                 f"/market/contractor/{spectrum_id}",
                 session=self.bot.session,
             )
         except:
-            await interaction.response.send_message(t("lookup.invalid_org"))
+            await interaction.response.send_message(t("lookup.invalid_org", locale))
             return
 
         if compact:
             await display_listings_compact(interaction, [{**l['details'], **l['listing']} for l in listings])
         else:
-            embeds = [create_market_embed_individual(item) for item in listings if
-                      item['listing']['quantity_available']]
+            embeds = [
+                create_market_embed_individual(item, locale)
+                for item in listings
+                if item['listing']['quantity_available']
+            ]
 
             if not embeds:
-                await interaction.response.send_message(t("lookup.no_listings_org"))
+                await interaction.response.send_message(t("lookup.no_listings_org", locale))
                 return
 
             paginator = ButtonPaginator(embeds, author_id=interaction.user.id)

@@ -8,7 +8,7 @@ from discord import app_commands
 from discord.ext import commands
 
 from util.fetch import internal_post, get_user_orders
-from util.i18n import t
+from util.i18n import t, get_locale
 
 
 class order(commands.GroupCog):
@@ -34,6 +34,7 @@ class order(commands.GroupCog):
             order: str = None,
     ):
         """Set the new status for the order in the current thread"""
+        locale = get_locale(interaction.user.id, interaction)
         order_payload = json.loads(order)
         if order is None:
             if isinstance(interaction.channel, discord.Thread):
@@ -45,7 +46,7 @@ class order(commands.GroupCog):
                                                },
                                                session=self.bot.session)
             else:
-                await interaction.response.send_message(t("order.no_order"))
+                await interaction.response.send_message(t("order.no_order", locale))
                 return
         else:
             response = await internal_post(
@@ -63,14 +64,14 @@ class order(commands.GroupCog):
         else:
             if order:
                 await interaction.response.send_message(
-                    t("order.update_success_with_title").format(
-                        status=t(f"order.status.{newstatus.replace('-', '_')}") ,
+                    t("order.update_success_with_title", locale).format(
+                        status=t(f"order.status.{newstatus.replace('-', '_')}", locale),
                         title=order_payload['t'],
                         order_id=order_payload['o'],
                     )
                 )
             else:
-                await interaction.response.send_message(t("order.update_success"))
+                await interaction.response.send_message(t("order.update_success", locale))
 
     @update_status.autocomplete('order')
     async def update_status_order_autocomplete(
