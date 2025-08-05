@@ -51,20 +51,26 @@ class order(
     ):
         """Set the new status for the order in the current thread"""
         locale = get_locale(interaction.user.id, interaction)
-        order_payload = json.loads(order)
         if order is None:
             if isinstance(interaction.channel, discord.Thread):
-                response = await internal_post("/threads/order/status",
-                                               json={
-                                                   "status": newstatus,
-                                                   "thread_id": str(interaction.channel.id),
-                                                   "discord_id": str(interaction.user.id)
-                                               },
-                                               session=self.bot.session)
+                response = await internal_post(
+                    "/threads/order/status",
+                    json={
+                        "status": newstatus,
+                        "thread_id": str(interaction.channel.id),
+                        "discord_id": str(interaction.user.id)
+                    },
+                    session=self.bot.session
+                )
             else:
                 await interaction.response.send_message(t("order.no_order", locale))
                 return
         else:
+            try:
+                order_payload = json.loads(order)
+            except json.JSONDecodeError:
+                await interaction.response.send_message(t("order.invalid", locale))
+                return
             response = await internal_post(
                 "/threads/order/status",
                 json={

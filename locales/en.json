@@ -16,6 +16,7 @@
   "order.no_order": "No order in this channel. Please select an order to update.",
   "order.update_success_with_title": "Successfully updated the status to {status} for order '[{title}](<https://sc-market.space/contract/{order_id}>)'",
   "order.update_success": "Successfully updated status for the order",
+  "order.invalid": "Invalid order data provided.",
   "order.status.fulfilled": "Fulfilled",
   "order.status.in_progress": "In Progress",
   "order.status.cancelled": "Cancelled",
