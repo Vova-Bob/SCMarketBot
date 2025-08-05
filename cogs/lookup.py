@@ -6,7 +6,7 @@ from discord.ext import commands
 from discord.ext.paginators.button_paginator import ButtonPaginator
 
 from util.fetch import public_fetch, search_users, search_orgs
-from util.i18n import t, get_locale
+from util.i18n import TRANSLATIONS, get_locale, t
 from util.listings import (
     create_market_embed,
     categories,
@@ -21,50 +21,92 @@ class Lookup(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
+    # Pre-build localized choices for categories, sorting methods, and sale types
+    category_choices = []
+    for value, name_key in categories.items():
+        choice = app_commands.Choice(name=t(name_key), value=value)  # name_key
+        choice.name_localizations = {
+            loc: t(name_key, loc) for loc in TRANSLATIONS
+        }
+        category_choices.append(choice)
+
+    sorting_choices = []
+    for key, name_key in sorting_methods.items():
+        choice = app_commands.Choice(name=t(name_key), value=key)  # name_key
+        choice.name_localizations = {
+            loc: t(name_key, loc) for loc in TRANSLATIONS
+        }
+        sorting_choices.append(choice)
+
+    sale_type_choices = []
+    for value, name_key in sale_types.items():
+        choice = app_commands.Choice(name=t(name_key), value=value)  # name_key
+        choice.name_localizations = {
+            loc: t(name_key, loc) for loc in TRANSLATIONS
+        }
+        sale_type_choices.append(choice)
+
     @app_commands.command(
-        name=t("commands.lookup.search.name"),
-        description=t("commands.lookup.search.description"),
+        name=lambda locale: t("commands.lookup.search.name", locale),  # commands.lookup.search.name
+        description=lambda locale: t(
+            "commands.lookup.search.description", locale
+        ),  # commands.lookup.search.description
     )
     @app_commands.describe(
-        query=app_commands.locale_str("The search query", uk="Пошуковий запит"),
+        query=app_commands.locale_str(
+            t("commands.lookup.search.query"),  # commands.lookup.search.query
+            **{
+                loc: t("commands.lookup.search.query", loc)
+                for loc in TRANSLATIONS
+            },
+        ),
         category=app_commands.locale_str(
-            "What category the item belongs to",
-            uk="Категорія, до якої належить предмет",
+            t("commands.lookup.search.category"),  # commands.lookup.search.category
+            **{
+                loc: t("commands.lookup.search.category", loc)
+                for loc in TRANSLATIONS
+            },
         ),
         sorting=app_commands.locale_str(
-            "What order to sort the listings by",
-            uk="Порядок сортування оголошень",
+            t("commands.lookup.search.sorting"),  # commands.lookup.search.sorting
+            **{
+                loc: t("commands.lookup.search.sorting", loc)
+                for loc in TRANSLATIONS
+            },
         ),
         sale_type=app_commands.locale_str(
-            "The method of sale",
-            uk="Метод продажу",
+            t("commands.lookup.search.sale_type"),  # commands.lookup.search.sale_type
+            **{
+                loc: t("commands.lookup.search.sale_type", loc)
+                for loc in TRANSLATIONS
+            },
         ),
         quantity_available=app_commands.locale_str(
-            "The minimum quantity available an item must have",
-            uk="Мінімальна доступна кількість предмета",
+            t("commands.lookup.search.quantity_available"),  # commands.lookup.search.quantity_available
+            **{
+                loc: t("commands.lookup.search.quantity_available", loc)
+                for loc in TRANSLATIONS
+            },
         ),
         min_cost=app_commands.locale_str(
-            "The minimum cost of items to search",
-            uk="Мінімальна ціна для пошуку",
+            t("commands.lookup.search.min_cost"),  # commands.lookup.search.min_cost
+            **{
+                loc: t("commands.lookup.search.min_cost", loc)
+                for loc in TRANSLATIONS
+            },
         ),
         max_cost=app_commands.locale_str(
-            "The maximum cost of items to search",
-            uk="Максимальна ціна для пошуку",
+            t("commands.lookup.search.max_cost"),  # commands.lookup.search.max_cost
+            **{
+                loc: t("commands.lookup.search.max_cost", loc)
+                for loc in TRANSLATIONS
+            },
         ),
     )
     @app_commands.choices(
-        category=[
-            app_commands.Choice(name=t(name_key), value=value)
-            for value, name_key in categories.items()
-        ],
-        sorting=[
-            app_commands.Choice(name=t(name_key), value=key)
-            for key, name_key in sorting_methods.items()
-        ],
-        sale_type=[
-            app_commands.Choice(name=t(name_key), value=value)
-            for value, name_key in sale_types.items()
-        ],
+        category=category_choices,
+        sorting=sorting_choices,
+        sale_type=sale_type_choices,
     )
     async def search(
             self,
@@ -113,22 +155,31 @@ class Lookup(commands.Cog):
         paginator = ButtonPaginator(embeds, author_id=interaction.user.id)
         await paginator.send(interaction)
 
-    search.name_localizations = {"uk": t("commands.lookup.search.name", "uk")}
-    search.description_localizations = {"uk": t("commands.lookup.search.description", "uk")}
-
     lookup = app_commands.Group(
-        name=t("commands.lookup.group.name"),
-        description=t("commands.lookup.group.description"),
+        name=lambda locale: t(
+            "commands.lookup.group.name", locale
+        ),  # commands.lookup.group.name
+        description=lambda locale: t(
+            "commands.lookup.group.description", locale
+        ),  # commands.lookup.group.description
     )
-    lookup.name_localizations = {"uk": t("commands.lookup.group.name", "uk")}
-    lookup.description_localizations = {"uk": t("commands.lookup.group.description", "uk")}
 
     @lookup.command(
-        name=t("commands.lookup.user.name"),
-        description=t("commands.lookup.user.description"),
+        name=lambda locale: t(
+            "commands.lookup.user.name", locale
+        ),  # commands.lookup.user.name
+        description=lambda locale: t(
+            "commands.lookup.user.description", locale
+        ),  # commands.lookup.user.description
     )
     @app_commands.describe(
-        handle=app_commands.locale_str("The handle of the user", uk="Ім'я користувача"),
+        handle=app_commands.locale_str(
+            t("commands.lookup.user.handle"),  # commands.lookup.user.handle
+            **{
+                loc: t("commands.lookup.user.handle", loc)
+                for loc in TRANSLATIONS
+            },
+        ),
     )
     async def user_search(
             self,
@@ -163,17 +214,21 @@ class Lookup(commands.Cog):
             paginator = ButtonPaginator(embeds, author_id=interaction.user.id)
             await paginator.send(interaction)
 
-    user_search.name_localizations = {"uk": t("commands.lookup.user.name", "uk")}
-    user_search.description_localizations = {"uk": t("commands.lookup.user.description", "uk")}
-
     @lookup.command(
-        name=t("commands.lookup.org.name"),
-        description=t("commands.lookup.org.description"),
+        name=lambda locale: t(
+            "commands.lookup.org.name", locale
+        ),  # commands.lookup.org.name
+        description=lambda locale: t(
+            "commands.lookup.org.description", locale
+        ),  # commands.lookup.org.description
     )
     @app_commands.describe(
         spectrum_id=app_commands.locale_str(
-            "The spectrum ID of the org",
-            uk="Spectrum ID організації",
+            t("commands.lookup.org.spectrum_id"),  # commands.lookup.org.spectrum_id
+            **{
+                loc: t("commands.lookup.org.spectrum_id", loc)
+                for loc in TRANSLATIONS
+            },
         ),
     )
     async def org_search(
@@ -208,9 +263,6 @@ class Lookup(commands.Cog):
 
             paginator = ButtonPaginator(embeds, author_id=interaction.user.id)
             await paginator.send(interaction)
-
-    org_search.name_localizations = {"uk": t("commands.lookup.org.name", "uk")}
-    org_search.description_localizations = {"uk": t("commands.lookup.org.description", "uk")}
 
     @user_search.autocomplete('handle')
     async def autocomplete_get_users(
