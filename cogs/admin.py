@@ -11,7 +11,10 @@ class Admin(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @app_commands.command()
+    @app_commands.command(
+        name=t("commands.admin.info.name"),
+        description=t("commands.admin.info.description"),
+    )
     async def info(self, interaction: discord.Interaction):
         """Some simple details about the bot."""
         locale = get_locale(interaction.user.id, interaction)
@@ -40,3 +43,6 @@ class Admin(commands.Cog):
         )
         embed.set_thumbnail(url=self.bot.user.display_avatar.url)
         await interaction.response.send_message(embed=embed, ephemeral=True)
+
+    info.name_localizations = {"uk": t("commands.admin.info.name", "uk")}
+    info.description_localizations = {"uk": t("commands.admin.info.description", "uk")}
