@@ -8,7 +8,7 @@ from aiohttp import web
 from discord import ChannelType
 from discord.ext.commands import Bot
 
-from util.i18n import load_translations, t
+from util.i18n import load_translations, t, get_locale
 
 load_translations()
 
@@ -212,8 +212,9 @@ class SCMarket(Bot):
                 invite = await channel.create_invite(max_uses=len(failed))
                 for member in failed:
                     user = await self.fetch_user(int(member))
+                    locale = get_locale(int(member), None)
                     try:
-                        await user.send(t("main.dm.offer").format(invite=invite))
+                        await user.send(t("main.dm.offer", locale).format(invite=invite))
                     except Exception as e:
                         print(e, offer)
             except Exception as e:
