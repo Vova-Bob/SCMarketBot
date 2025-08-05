@@ -68,4 +68,7 @@
   ,
   "locale.set.success": "Language set to {locale}",
   "locale.set.invalid": "Unsupported language: {locale}"
+  ,
+  "views.select_status": "Select status...",
+  "views.update": "Update"
 }
