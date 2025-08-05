@@ -1,0 +1,14 @@
+{
+  "ready": "Ready!",
+  "unknown_error": "An unknown error occurred",
+  "registered": "Registered {type} for {entity}",
+  "register_failed": "Failed to register channel: {error}",
+  "no_results": "No results found",
+  "invalid_user": "Invalid user",
+  "invalid_org": "Invalid org",
+  "no_listings": "No listings to display",
+  "no_listings_org": "No listings to display for org",
+  "no_order": "No order in this channel. Please select an order to update.",
+  "status_updated": "Successfully updated status for the order",
+  "status_updated_specific": "Successfully updated the status to {status} for order '{title}'"
+}
