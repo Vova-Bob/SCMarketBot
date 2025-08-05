@@ -74,6 +74,7 @@
   "commands.admin.info.description": "Some simple details about the bot",
   "commands.locale.setlanguage.name": "setlanguage",
   "commands.locale.setlanguage.description": "Set the preferred language for this user",
+  "commands.locale.setlanguage.code": "Locale code, e.g. 'en' or 'uk'",
   "commands.locale.language.name": "language",
   "commands.locale.language.description": "Alias for setlanguage",
   "commands.lookup.group.name": "lookup",
