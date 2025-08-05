@@ -62,45 +62,45 @@ class Locale(commands.Cog):
         )
 
     @app_commands.command(
-        name=t("commands.locale.setlanguage.name"),
-        description=t("commands.locale.setlanguage.description"),
+        name=lambda: t("commands.locale.setlanguage.name"),  # "commands.locale.setlanguage.name"
+        description=lambda: t("commands.locale.setlanguage.description"),  # "commands.locale.setlanguage.description"
     )
     @app_commands.describe(
         code=app_commands.locale_str(
-            "Locale code, e.g. 'en' or 'uk'",
-            uk="Код мови, напр. 'en' або 'uk'",
-        )
+            t("commands.locale.setlanguage.code", "en"),
+            **{loc: t("commands.locale.setlanguage.code", loc) for loc in TRANSLATIONS},
+        )  # "commands.locale.setlanguage.code"
     )
     async def setlanguage(self, interaction: discord.Interaction, code: str | None = None):
         """Set the preferred language for this user."""
         await self._set_language(interaction, code)
 
     setlanguage.name_localizations = {
-        "uk": t("commands.locale.setlanguage.name", "uk")
+        loc: t("commands.locale.setlanguage.name", loc) for loc in TRANSLATIONS
     }
     setlanguage.description_localizations = {
-        "uk": t("commands.locale.setlanguage.description", "uk")
+        loc: t("commands.locale.setlanguage.description", loc) for loc in TRANSLATIONS
     }
 
     @app_commands.command(
-        name=t("commands.locale.language.name"),
-        description=t("commands.locale.language.description"),
+        name=lambda: t("commands.locale.language.name"),  # "commands.locale.language.name"
+        description=lambda: t("commands.locale.language.description"),  # "commands.locale.language.description"
     )
     @app_commands.describe(
         code=app_commands.locale_str(
-            "Locale code, e.g. 'en' or 'uk'",
-            uk="Код мови, напр. 'en' або 'uk'",
-        )
+            t("commands.locale.setlanguage.code", "en"),
+            **{loc: t("commands.locale.setlanguage.code", loc) for loc in TRANSLATIONS},
+        )  # "commands.locale.setlanguage.code"
     )
     async def language(self, interaction: discord.Interaction, code: str | None = None):
         """Alias for setlanguage."""
         await self._set_language(interaction, code)
 
     language.name_localizations = {
-        "uk": t("commands.locale.language.name", "uk")
+        loc: t("commands.locale.language.name", loc) for loc in TRANSLATIONS
     }
     language.description_localizations = {
-        "uk": t("commands.locale.language.description", "uk")
+        loc: t("commands.locale.language.description", loc) for loc in TRANSLATIONS
     }
 
 

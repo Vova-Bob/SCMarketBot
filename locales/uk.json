@@ -74,6 +74,7 @@
   "commands.admin.info.description": "Деякі прості відомості про бота",
   "commands.locale.setlanguage.name": "встановитимову",
   "commands.locale.setlanguage.description": "Встановити бажану мову для цього користувача",
+  "commands.locale.setlanguage.code": "Код мови, напр. 'en' або 'uk'",
   "commands.locale.language.name": "мова",
   "commands.locale.language.description": "Псевдонім для setlanguage",
   "commands.lookup.group.name": "перегляд",
