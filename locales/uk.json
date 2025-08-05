@@ -98,6 +98,8 @@
   "commands.order.group.description": "Керування замовленнями",
   "commands.order.status.name": "статус",
   "commands.order.status.description": "Встановити новий статус замовлення в поточному треді",
+  "commands.order.status.order": "Замовлення для оновлення",
+  "commands.order.status.newstatus": "Новий статус замовлення",
   "commands.register.group.name": "реєстрація",
   "commands.register.group.description": "Реєстрація каналів або серверів для виконання замовлень",
   "commands.register.channel.group.name": "канал",

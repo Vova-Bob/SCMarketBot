@@ -8,41 +8,48 @@ from discord import app_commands
 from discord.ext import commands
 
 from util.fetch import internal_post, get_user_orders
-from util.i18n import t, get_locale
+from util.i18n import TRANSLATIONS, get_locale, t
 
 
 class order(
     commands.GroupCog,
-    name=t("commands.order.group.name"),
-    description=t("commands.order.group.description"),
+    name=lambda locale: t("commands.order.group.name", locale),
+    description=lambda locale: t("commands.order.group.description", locale),
 ):
     def __init__(self, bot):
         self.bot = bot
         self.__cog_app_commands_group__.name_localizations = {
-            "uk": t("commands.order.group.name", "uk")
+            loc: t("commands.order.group.name", loc) for loc in TRANSLATIONS
         }
         self.__cog_app_commands_group__.description_localizations = {
-            "uk": t("commands.order.group.description", "uk")
+            loc: t("commands.order.group.description", loc) for loc in TRANSLATIONS
         }
 
+    status_choices = []
+    for value, key in [
+        ("fulfilled", "order.status.fulfilled"),
+        ("in-progress", "order.status.in_progress"),
+        ("cancelled", "order.status.cancelled"),
+    ]:
+        choice = app_commands.Choice(name=t(key), value=value)
+        choice.name_localizations = {loc: t(key, loc) for loc in TRANSLATIONS}
+        status_choices.append(choice)
+
     @app_commands.command(
-        name=t("commands.order.status.name"),
-        description=t("commands.order.status.description"),
+        name=lambda locale: t("commands.order.status.name", locale),
+        description=lambda locale: t("commands.order.status.description", locale),
     )
     @app_commands.describe(
-        order=app_commands.locale_str("The order to update", uk="Замовлення для оновлення"),
+        order=app_commands.locale_str(
+            t("commands.order.status.order", "en"),
+            **{loc: t("commands.order.status.order", loc) for loc in TRANSLATIONS},
+        ),
         newstatus=app_commands.locale_str(
-            "The new status to set the order to",
-            uk="Новий статус замовлення",
+            t("commands.order.status.newstatus", "en"),
+            **{loc: t("commands.order.status.newstatus", loc) for loc in TRANSLATIONS},
         ),
     )
-    @app_commands.choices(
-        newstatus=[
-            app_commands.Choice(name=t("order.status.fulfilled"), value="fulfilled"),
-            app_commands.Choice(name=t("order.status.in_progress"), value="in-progress"),
-            app_commands.Choice(name=t("order.status.cancelled"), value="cancelled"),
-        ],
-    )
+    @app_commands.choices(newstatus=status_choices)
     async def update_status(
             self,
             interaction: discord.Interaction,
@@ -96,10 +103,10 @@ class order(
                 await interaction.response.send_message(t("order.update_success", locale))
 
     update_status.name_localizations = {
-        "uk": t("commands.order.status.name", "uk")
+        loc: t("commands.order.status.name", loc) for loc in TRANSLATIONS
     }
     update_status.description_localizations = {
-        "uk": t("commands.order.status.description", "uk")
+        loc: t("commands.order.status.description", loc) for loc in TRANSLATIONS
     }
 
     @update_status.autocomplete('order')
