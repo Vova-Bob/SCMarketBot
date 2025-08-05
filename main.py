@@ -13,7 +13,7 @@ from cogs.lookup import Lookup
 from cogs.order import order
 from cogs.registration import Registration, DISCORD_BACKEND_URL
 from cogs.stock import stock
-from cogs.lang import Language
+from cogs.language import Language
 from util.api_server import create_api
 from util.result import Result
 from util.i18n import I18n

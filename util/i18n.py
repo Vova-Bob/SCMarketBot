@@ -12,6 +12,11 @@ class I18n:
         self._load_locales()
         self._load_user_lang()
 
+    @property
+    def available_languages(self) -> list[str]:
+        """Return a list of loaded language codes."""
+        return list(self.translations.keys())
+
     def _load_locales(self) -> None:
         if not os.path.isdir(self.locales_dir):
             return
@@ -45,6 +50,10 @@ class I18n:
     def set_user_lang(self, user_id: int | str, lang: str) -> None:
         self.user_lang[str(user_id)] = lang
         self._save_user_lang()
+
+    def set_user(self, user_id: int | str, lang: str) -> None:
+        """Alias for backwards compatibility."""
+        self.set_user_lang(user_id, lang)
 
     def get_lang(self, interaction: Any) -> str:
         user_id = getattr(getattr(interaction, 'user', None), 'id', None)
