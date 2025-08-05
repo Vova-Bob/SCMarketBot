@@ -16,6 +16,7 @@
   "order.no_order": "У цьому каналі немає замовлення. Будь ласка, виберіть замовлення для оновлення.",
   "order.update_success_with_title": "Статус успішно оновлено до {status} для замовлення '[{title}](<https://sc-market.space/contract/{order_id}>)'",
   "order.update_success": "Статус замовлення успішно оновлено",
+  "order.invalid": "Надано недійсні дані замовлення.",
   "order.status.fulfilled": "Виконано",
   "order.status.in_progress": "В процесі",
   "order.status.cancelled": "Скасовано",
