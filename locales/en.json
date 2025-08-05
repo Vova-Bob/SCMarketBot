@@ -114,6 +114,7 @@
   "commands.register.server.contractor.description": "Register a server as the official server for your contractor",
   "commands.register.server.user.name": "user",
   "commands.register.server.user.description": "Register a server as the official server for your user",
+  "commands.register.contractor.param.name": "The name of the contractor",
   "commands.stock.group.name": "stock",
   "commands.stock.group.description": "Manage market listing stock",
   "commands.stock.set.name": "set",

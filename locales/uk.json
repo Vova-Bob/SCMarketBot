@@ -114,6 +114,7 @@
   "commands.register.server.contractor.description": "Зареєструвати сервер як офіційний сервер вашого підрядника",
   "commands.register.server.user.name": "користувач",
   "commands.register.server.user.description": "Зареєструвати сервер як офіційний сервер вашого користувача",
+  "commands.register.contractor.param.name": "Ім'я підрядника",
   "commands.stock.group.name": "запас",
   "commands.stock.group.description": "Керування запасами оголошень",
   "commands.stock.set.name": "встановити",
