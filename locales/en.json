@@ -98,6 +98,8 @@
   "commands.order.group.description": "Manage orders",
   "commands.order.status.name": "status",
   "commands.order.status.description": "Set the new status for the order in the current thread",
+  "commands.order.status.order": "The order to update",
+  "commands.order.status.newstatus": "The new status to set the order to",
   "commands.register.group.name": "register",
   "commands.register.group.description": "Register channels or servers for order fulfillment",
   "commands.register.channel.group.name": "channel",
