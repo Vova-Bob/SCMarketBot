@@ -15,6 +15,7 @@ from cogs.registration import Registration, DISCORD_BACKEND_URL
 from cogs.stock import stock
 from util.api_server import create_api
 from util.result import Result
+from util.i18n import I18n
 
 intents = discord.Intents.default()
 intents.members = True
@@ -26,6 +27,10 @@ logger.setLevel(logging.DEBUG)
 
 class SCMarket(Bot):
     session = None
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.i18n = I18n(default="en")
 
     async def setup_hook(self):
         await self.add_cog(Registration(self))
