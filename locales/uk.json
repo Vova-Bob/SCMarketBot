@@ -68,4 +68,7 @@
   ,
   "locale.set.success": "Мову встановлено на {locale}",
   "locale.set.invalid": "Непідтримувана мова: {locale}"
+  ,
+  "views.select_status": "Виберіть статус...",
+  "views.update": "Оновити"
 }
