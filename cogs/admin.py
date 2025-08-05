@@ -12,8 +12,8 @@ class Admin(commands.Cog):
         self.bot = bot
 
     @app_commands.command(
-        name=lambda locale: t("commands.admin.info.name", locale),  # "commands.admin.info.name"
-        description=lambda locale: t("commands.admin.info.description", locale),  # "commands.admin.info.description"
+        name=t("commands.admin.info.name", "en"),  # "commands.admin.info.name"
+        description=t("commands.admin.info.description", "en"),  # "commands.admin.info.description"
     )
     async def info(self, interaction: discord.Interaction):
         """Some simple details about the bot."""
