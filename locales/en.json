@@ -10,5 +10,7 @@
   "no_listings_org": "No listings to display for org",
   "no_order": "No order in this channel. Please select an order to update.",
   "status_updated": "Successfully updated status for the order",
-  "status_updated_specific": "Successfully updated the status to {status} for order '{title}'"
+  "status_updated_specific": "Successfully updated the status to {status} for order '{title}'",
+  "language_set": "Language updated to {locale}",
+  "language_current": "Your current language is {locale}"
 }
