@@ -65,4 +65,7 @@
   "main.error.no_view_permission": "Бот не має дозволу переглядати налаштований канал нитки",
   "main.error.invalid_data": "Бот отримав недійсні дані від Discord під час спроби отримати налаштований канал нитки",
   "main.error.no_create_permission": "Бот не має дозволу створювати нитки в налаштованому каналі"
+  ,
+  "locale.set.success": "Мову встановлено на {locale}",
+  "locale.set.invalid": "Непідтримувана мова: {locale}"
 }

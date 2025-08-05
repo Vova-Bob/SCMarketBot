@@ -65,4 +65,7 @@
   "main.error.no_view_permission": "The bot does not have permission to view the configured thread channel",
   "main.error.invalid_data": "The bot received invalid data from Discord when attempting to fetch the configured thread channel",
   "main.error.no_create_permission": "The bot does not have permission to create threads in the configured channel"
+  ,
+  "locale.set.success": "Language set to {locale}",
+  "locale.set.invalid": "Unsupported language: {locale}"
 }
