@@ -70,9 +70,9 @@ class Lookup(commands.Cog):
             self,
             interaction: discord.Interaction,
             query: str,
-            category: app_commands.Choice[str] = '',
-            sorting: app_commands.Choice[str] = 'activity',
-            sale_type: app_commands.Choice[str] = '',
+            category: str | None = None,
+            sorting: str | None = 'activity',
+            sale_type: str | None = None,
             quantity_available: int = 1,
             min_cost: int = 0,
             max_cost: int = 0,
@@ -81,7 +81,7 @@ class Lookup(commands.Cog):
         locale = get_locale(interaction.user.id, interaction)
         params = {
             'query': query,
-            'sort': sorting,
+            'sort': sorting.value if isinstance(sorting, app_commands.Choice) else sorting,
             'quantityAvailable': quantity_available,
             'minCost': min_cost,
             'page_size': 48,
@@ -89,9 +89,9 @@ class Lookup(commands.Cog):
         }
 
         if category:
-            params['item_type'] = category
+            params['item_type'] = category.value if isinstance(category, app_commands.Choice) else category
         if sale_type:
-            params['sale_type'] = sale_type
+            params['sale_type'] = sale_type.value if isinstance(sale_type, app_commands.Choice) else sale_type
         if max_cost:
             params['maxCost'] = max_cost
 
@@ -108,6 +108,7 @@ class Lookup(commands.Cog):
         ]
         if not embeds:
             await interaction.response.send_message(t("lookup.no_results", locale))
+            return
 
         paginator = ButtonPaginator(embeds, author_id=interaction.user.id)
         await paginator.send(interaction)
