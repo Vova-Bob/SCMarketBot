@@ -8,7 +8,7 @@ from discord import app_commands
 from discord.ext import commands
 
 from util.fetch import internal_post, get_user_orders
-from util.i18n import tr, cmd, option
+from util.i18n import tr, cmd, option, t
 
 
 class order(commands.GroupCog):
@@ -19,8 +19,21 @@ class order(commands.GroupCog):
     @app_commands.command(**cmd('order.status'))
     @app_commands.choices(
         newstatus=[
-            app_commands.Choice(name=name, value=value) for name, value in
-            [("Fulfilled", "fulfilled"), ("In Progress", "in-progress"), ("Cancelled", "cancelled")]
+            app_commands.Choice(
+                name=t('order.status.choices.fulfilled', 'en'),
+                value='fulfilled',
+                name_localizations={'uk': t('order.status.choices.fulfilled', 'uk')},
+            ),
+            app_commands.Choice(
+                name=t('order.status.choices.in_progress', 'en'),
+                value='in-progress',
+                name_localizations={'uk': t('order.status.choices.in_progress', 'uk')},
+            ),
+            app_commands.Choice(
+                name=t('order.status.choices.cancelled', 'en'),
+                value='cancelled',
+                name_localizations={'uk': t('order.status.choices.cancelled', 'uk')},
+            ),
         ],
     )
     @app_commands.describe(
@@ -62,8 +75,17 @@ class order(commands.GroupCog):
             await interaction.response.send_message(response['error'])
         else:
             if order:
+                status_localized = tr(
+                    interaction,
+                    f"order.status.choices.{newstatus.replace('-', '_')}",
+                )
                 await interaction.response.send_message(
-                    tr(interaction, 'order.success_specific', status=newstatus, title=order_payload['t'])
+                    tr(
+                        interaction,
+                        'order.success_specific',
+                        status=status_localized,
+                        title=order_payload['t'],
+                    )
                 )
             else:
                 await interaction.response.send_message(tr(interaction, 'order.success'))

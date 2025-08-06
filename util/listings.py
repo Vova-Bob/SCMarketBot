@@ -8,25 +8,41 @@ from discord.ext.paginators.button_paginator import ButtonPaginator
 from util.iter import chunks
 from util.i18n import t, get_locale
 
-categories = ["Armor", "Clothing", "Weapon", "Paint", "Bundle", "Flair", "Addon", "Consumable", "Other"]
+# These lists provide the internal keys for display options. The human readable
+# strings are stored in the locale JSON files and accessed via ``t``/``tr``.
+categories = [
+    "armor",
+    "clothing",
+    "weapon",
+    "paint",
+    "bundle",
+    "flair",
+    "addon",
+    "consumable",
+    "other",
+]
+
 sorting_methods = {
-    'title': "Title",
-    'price-low': "Price (Low to High)",
-    'price-high': "Price (High to Low)",
-    'quantity-low': "Quantity Available (Low to High)",
-    'quantity-high': "Quantity Available (High to Low)",
-    'date-new': "Date Listed (Old to New)",
-    'date-old': "Date Listed (New to Old)",
-    'activity': "Recent Activity",
-    'rating': "Rating (High to Low)",
+    "title": "sorting.title",
+    "price-low": "sorting.price_low",
+    "price-high": "sorting.price_high",
+    "quantity-low": "sorting.quantity_low",
+    "quantity-high": "sorting.quantity_high",
+    "date-new": "sorting.date_new",
+    "date-old": "sorting.date_old",
+    "activity": "sorting.activity",
+    "rating": "sorting.rating",
 }
 
-sale_types = ["Aggregate", "Auction", "Sale"]
+sale_types = ["aggregate", "auction", "sale"]
 
 
 def create_market_embed(listing: dict, locale: str):
     embed = discord.Embed(url=f"https://sc-market.space/market/{listing['listing_id']}", title=listing['title'])
-    embed.add_field(name=t('fields.item_type', locale), value=listing['item_type'].capitalize())
+    embed.add_field(
+        name=t('fields.item_type', locale),
+        value=t(f"categories.{listing['item_type'].lower()}", locale),
+    )
     if listing["listing_type"] != "unique":
         embed.add_field(name=t('fields.minimum_price', locale), value=f"{int(listing['minimum_price']):,} aUEC")
         embed.add_field(name=t('fields.maximum_price', locale), value=f"{int(listing['maximum_price']):,} aUEC")
@@ -39,7 +55,10 @@ def create_market_embed(listing: dict, locale: str):
 
     if listing['auction_end_time'] is not None:
         date = datetime.datetime.strptime(listing['auction_end_time'], '%Y-%m-%dT%H:%M:%S.%fZ')
-        embed.add_field(name=t('fields.auction_end', locale), value="Ending " + humanize.naturaltime(date))
+        embed.add_field(
+            name=t('fields.auction_end', locale),
+            value=t('fields.ending', locale, time=humanize.naturaltime(date)),
+        )
 
     embed.add_field(name=t('fields.quantity_available', locale), value=f"{int(listing['quantity_available']):,}")
 
@@ -52,7 +71,10 @@ def create_market_embed(listing: dict, locale: str):
 def create_market_embed_individual(listing: dict, locale: str):
     embed = discord.Embed(url=f"https://sc-market.space/market/{listing['listing']['listing_id']}",
                           title=listing['details']['title'])
-    embed.add_field(name=t('fields.item_type', locale), value=listing['details']['item_type'].capitalize())
+    embed.add_field(
+        name=t('fields.item_type', locale),
+        value=t(f"categories.{listing['details']['item_type'].lower()}", locale),
+    )
     embed.add_field(name=t('fields.price', locale), value=f"{int(listing['listing']['price']):,} aUEC")
     seller = listing['listing'].get('contractor_seller') or listing['listing'].get('user_seller')
     embed.add_field(
@@ -62,7 +84,10 @@ def create_market_embed_individual(listing: dict, locale: str):
 
     if listing.get('auction_details') and listing['auction_details']['auction_end_time'] is not None:
         date = datetime.datetime.strptime(listing['auction_details']['auction_end_time'], '%Y-%m-%dT%H:%M:%S.%fZ')
-        embed.add_field(name=t('fields.auction_end', locale), value="Ending " + humanize.naturaltime(date))
+        embed.add_field(
+            name=t('fields.auction_end', locale),
+            value=t('fields.ending', locale, time=humanize.naturaltime(date)),
+        )
 
     embed.add_field(name=t('fields.quantity_available', locale), value=f"{int(listing['listing']['quantity_available']):,}")
 

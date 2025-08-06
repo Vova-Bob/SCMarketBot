@@ -15,6 +15,7 @@ from cogs.registration import Registration, DISCORD_BACKEND_URL
 from cogs.stock import stock
 from util.api_server import create_api
 from util.result import Result
+from util.i18n import t, get_locale
 
 intents = discord.Intents.default()
 intents.members = True
@@ -93,7 +94,12 @@ class SCMarket(Bot):
             return dict(thread=thread, failed=bool(result.error), message=result.error, invite_code=invite)
         except:
             traceback.print_exc()
-            return dict(thread=None, failed=True, message="An unknown error occurred", invite_code=None)
+            return dict(
+                thread=None,
+                failed=True,
+                message=t('errors.unknown', 'en'),
+                invite_code=None,
+            )
 
     async def verify_invite(self, customer_id, server_id, channel_id, invite_code):
         guild: discord.Guild = await self.fetch_guild(int(server_id))
@@ -158,11 +164,11 @@ class SCMarket(Bot):
 
     async def create_thread(self, server_id: int, channel_id: int, members: list[int], offer: dict):
         if not server_id or not channel_id or not members:
-            return Result(error="Server or Channel or Members are not configured")
+            return Result(error=t('errors.server_channel_members', 'en'))
 
         guild: discord.Guild = await self.fetch_guild(int(server_id))
         if not guild:
-            return Result(error="Bot is not in the configured guild")
+            return Result(error=t('errors.bot_not_in_guild', 'en'))
 
         try:
             channel = guild.get_channel(int(channel_id))
@@ -172,11 +178,11 @@ class SCMarket(Bot):
                 except discord.NotFound:
                     pass
             if not channel:
-                return Result(error="The configured thread channel no longer exists")
+                return Result(error=t('errors.thread_channel_missing', 'en'))
         except discord.Forbidden:
-            return Result(error="The bot does not have permission to view the configured thread channel")
+            return Result(error=t('errors.no_view_perm', 'en'))
         except discord.InvalidData:
-            return Result(error="The bot received invalid data from Discord when attempting to fetch the configured thread channel")
+            return Result(error=t('errors.invalid_thread_data', 'en'))
 
         is_order = offer.get("order_id")
 
@@ -186,7 +192,7 @@ class SCMarket(Bot):
                 type=ChannelType.private_thread
             )
         except:
-            return Result(error="The bot does not have permission to create threads in the configured channel")
+            return Result(error=t('errors.no_create_thread_perm', 'en'))
 
         await thread.add_user(self.user)
 
@@ -208,8 +214,11 @@ class SCMarket(Bot):
                     user = await self.fetch_user(int(member))
                     try:
                         await user.send(
-                            f"You submitted an offer on SC Market. Please join the fulfillment server to "
-                            f"communicate directly with the seller: {invite}"
+                            t(
+                                'dm.offer_invite',
+                                get_locale(user),
+                                invite=invite,
+                            )
                         )
                     except Exception as e:
                         print(e, offer)

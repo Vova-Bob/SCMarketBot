@@ -8,7 +8,7 @@ from discord.ext.paginators.button_paginator import ButtonPaginator
 from util.fetch import public_fetch, search_users, search_orgs
 from util.listings import create_market_embed, categories, sorting_methods, sale_types, create_market_embed_individual, \
     display_listings_compact
-from util.i18n import get_locale, tr, cmd, option
+from util.i18n import get_locale, tr, cmd, option, t
 
 
 class Lookup(commands.Cog):
@@ -18,13 +18,28 @@ class Lookup(commands.Cog):
     @app_commands.command(**cmd('search'))
     @app_commands.choices(
         category=[
-            app_commands.Choice(name=item, value=item.lower()) for item in categories
+            app_commands.Choice(
+                name=t(f"categories.{item}", 'en'),
+                value=item,
+                name_localizations={'uk': t(f"categories.{item}", 'uk')},
+            )
+            for item in categories
         ],
         sorting=[
-            app_commands.Choice(name=value, value=key) for key, value in sorting_methods.items()
+            app_commands.Choice(
+                name=t(value, 'en'),
+                value=key,
+                name_localizations={'uk': t(value, 'uk')},
+            )
+            for key, value in sorting_methods.items()
         ],
         sale_type=[
-            app_commands.Choice(name=item, value=item.lower()) for item in sale_types
+            app_commands.Choice(
+                name=t(f"sale_types.{item}", 'en'),
+                value=item,
+                name_localizations={'uk': t(f"sale_types.{item}", 'uk')},
+            )
+            for item in sale_types
         ],
     )
     @app_commands.describe(
