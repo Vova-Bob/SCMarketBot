@@ -222,6 +222,18 @@
         "in_progress": "В процесі",
         "cancelled": "Скасовано"
       }
+    },
+    "embed": {
+      "items_sold_to": "Товари продані для {buyer}",
+      "discord_user_details": "Деталі користувача Discord",
+      "complete_delivery": "Завершіть доставку проданих товарів для {buyer}",
+      "total": "Разом",
+      "user_offer": "Пропозиція користувача",
+      "note_from_buyer": "Повідомлення від покупця",
+      "offer": "Пропозиція",
+      "kind": "Тип",
+      "collateral": "Застава",
+      "today": "Сьогодні о {time}"
     }
   },
   "registration": {
