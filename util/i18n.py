@@ -8,11 +8,11 @@ def get_locale(ctx) -> str:
     """Return the locale for the given interaction/ctx."""
     locale = None
     if getattr(ctx, 'interaction', None) and getattr(ctx.interaction, 'locale', None):
-        locale = ctx.interaction.locale
+        locale = str(ctx.interaction.locale)
     elif getattr(ctx, 'author', None) and getattr(ctx.author, 'locale', None):
-        locale = ctx.author.locale
+        locale = str(ctx.author.locale)
     elif getattr(ctx, 'locale', None):
-        locale = ctx.locale
+        locale = str(ctx.locale)
     if locale:
         locale = locale.split('-')[0]
     if not locale or not (LOCALE_DIR / f"{locale}.json").exists():
