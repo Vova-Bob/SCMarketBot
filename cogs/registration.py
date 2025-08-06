@@ -25,9 +25,10 @@ class Registration(commands.GroupCog):
 
     @channel.command(**cmd('register.channel.contractor'))
     @checks.has_permissions(administrator=True)
+    @app_commands.describe(name=option('register.channel.contractor', 'name'))
     async def contractor_channel(
             self, interaction: discord.Interaction,
-            name: str = option('register.channel.contractor', 'name')
+            name: str
     ):
         """Register a channel as the channel that will house threads for order fulfillment for your contractor. Make sure the bot has permission to see the channel and make private threads there."""
         await self.register(interaction, "channel", "contractor", name)
@@ -42,9 +43,10 @@ class Registration(commands.GroupCog):
 
     @server.command(**cmd('register.server.contractor'))
     @checks.has_permissions(administrator=True)
+    @app_commands.describe(name=option('register.server.contractor', 'name'))
     async def contractor_server(
             self, interaction: discord.Interaction,
-            name: str = option('register.server.contractor', 'name')
+            name: str
     ):
         """Register a server as the official server for order fulfillment for your contractor."""
         await self.register(interaction, "server", "contractor", name)

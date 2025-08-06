@@ -23,14 +23,18 @@ class order(commands.GroupCog):
             [("Fulfilled", "fulfilled"), ("In Progress", "in-progress"), ("Cancelled", "cancelled")]
         ],
     )
+    @app_commands.describe(
+        newstatus=option('order.status', 'newstatus'),
+        order=option('order.status', 'order'),
+    )
     async def update_status(
             self,
             interaction: discord.Interaction,
-            newstatus: str = option('order.status', 'newstatus'),
-            order: str = option('order.status', 'order', None),
+            newstatus: str,
+            order: str = None,
     ):
         """Set the new status for the order in the current thread"""
-        order_payload = json.loads(order)
+        order_payload = json.loads(order) if order else None
         if order is None:
             if isinstance(interaction.channel, discord.Thread):
                 response = await internal_post("/threads/order/status",

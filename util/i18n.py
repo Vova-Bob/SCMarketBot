@@ -2,8 +2,6 @@ import json
 from pathlib import Path
 from functools import lru_cache
 
-from discord import app_commands
-
 LOCALE_DIR = Path(__file__).resolve().parent.parent / 'locale'
 
 
@@ -62,13 +60,14 @@ def cmd(key: str) -> dict:
     return dict(name=name, description=desc)
 
 
-def option(command_key: str, option_name: str, default=None):
-    """Return app_commands.Param using English strings from locale files."""
-    name = t(f'commands.{command_key}.options.{option_name}.name', 'en')
+def option(command_key: str, option_name: str) -> str:
+    """Return the English description for an option.
+
+    This pulls the description from the locale JSON files so descriptions
+    remain centralized alongside other translations. Only the English strings
+    are used for command registration in accordance with discord.py 2.5.2.
+    """
     desc = t(f'commands.{command_key}.options.{option_name}.description', 'en')
-    if name == f'commands.{command_key}.options.{option_name}.name':
-        name = option_name
     if desc == f'commands.{command_key}.options.{option_name}.description':
         desc = ''
-    return app_commands.Param(default, name=name, description=desc)
-
+    return desc

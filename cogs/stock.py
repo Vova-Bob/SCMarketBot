@@ -18,34 +18,49 @@ class stock(commands.GroupCog):
         self.bot = bot
 
     @app_commands.command(**cmd('stock.set'))
+    @app_commands.describe(
+        owner=option('stock.set', 'owner'),
+        listing=option('stock.set', 'listing'),
+        quantity=option('stock.set', 'quantity'),
+    )
     async def set_stock(
             self,
             interaction: discord.Interaction,
-            owner: str = option('stock.set', 'owner'),
-            listing: str = option('stock.set', 'listing'),
-            quantity: int = option('stock.set', 'quantity'),
+            owner: str,
+            listing: str,
+            quantity: int,
     ):
         """Set the stock quantity for a given market listing"""
         await self.handle_stock_change(interaction, 'set', owner, listing, quantity)
 
     @app_commands.command(**cmd('stock.add'))
+    @app_commands.describe(
+        owner=option('stock.add', 'owner'),
+        listing=option('stock.add', 'listing'),
+        quantity=option('stock.add', 'quantity'),
+    )
     async def add_stock(
             self,
             interaction: discord.Interaction,
-            owner: str = option('stock.add', 'owner'),
-            listing: str = option('stock.add', 'listing'),
-            quantity: int = option('stock.add', 'quantity'),
+            owner: str,
+            listing: str,
+            quantity: int,
     ):
         """Add to the stock quantity for a given market listing"""
         await self.handle_stock_change(interaction, 'add', owner, listing, quantity)
 
     @app_commands.command(**cmd('stock.sub'))
+    @app_commands.describe(
+        owner=option('stock.sub', 'owner'),
+        listing=option('stock.sub', 'listing'),
+        quantity=option('stock.sub', 'quantity'),
+    )
     async def sub_stock(
             self,
             interaction: discord.Interaction,
-            owner: str = option('stock.sub', 'owner'),
-            listing: str = option('stock.sub', 'listing'),
-            quantity: int = option('stock.sub', 'quantity'),
+            owner: str,
+            listing: str,
+            quantity: int,
     ):
         """Subtract from the stock quantity for a given market listing"""
         await self.handle_stock_change(interaction, 'sub', owner, listing, quantity)
@@ -80,10 +95,11 @@ class stock(commands.GroupCog):
             )
 
     @app_commands.command(**cmd('stock.view'))
+    @app_commands.describe(owner=option('stock.view', 'owner'))
     async def view_stock(
             self,
             interaction: discord.Interaction,
-            owner: str = option('stock.view', 'owner', None),
+            owner: str = None,
     ):
         """Set the stock quantity for a given market listing"""
         if owner and interaction.namespace.owner != "_ME":
