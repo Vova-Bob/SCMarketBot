@@ -15,7 +15,7 @@ from cogs.registration import Registration, DISCORD_BACKEND_URL
 from cogs.stock import stock
 from util.api_server import create_api
 from util.result import Result
-from util.i18n import t, get_locale
+from util.i18n import t, tr
 
 intents = discord.Intents.default()
 intents.members = True
@@ -162,6 +162,45 @@ class SCMarket(Bot):
         except Exception as e:
             traceback.print_exc()
 
+    async def order_status_update(self, order: dict):
+        try:
+            seller_id = order.get('seller_discord_id')
+            if not seller_id:
+                return False
+            user = await self.fetch_user(int(seller_id))
+            now = discord.utils.utcnow()
+            buyer_name = order.get('buyer_name', '')
+            embed = discord.Embed(
+                title=tr(user, 'order.embed.items_sold_to', buyer=buyer_name),
+                description=tr(user, 'order.embed.complete_delivery', buyer=buyer_name),
+            )
+            embed.add_field(
+                name=tr(user, 'order.embed.discord_user_details'),
+                value=order.get('buyer_tag', ''),
+                inline=False,
+            )
+            for item in order.get('items', []):
+                embed.add_field(name=item.get('name'), value=str(item.get('quantity', '')), inline=False)
+            if order.get('total') is not None:
+                embed.add_field(name=tr(user, 'order.embed.total'), value=str(order.get('total')), inline=True)
+            if order.get('user_offer') is not None:
+                embed.add_field(name=tr(user, 'order.embed.user_offer'), value=str(order.get('user_offer')), inline=True)
+            if order.get('note_from_buyer'):
+                embed.add_field(name=tr(user, 'order.embed.note_from_buyer'), value=order.get('note_from_buyer'), inline=False)
+            if order.get('offer') is not None:
+                embed.add_field(name=tr(user, 'order.embed.offer'), value=str(order.get('offer')), inline=True)
+            if order.get('kind'):
+                embed.add_field(name=tr(user, 'order.embed.kind'), value=str(order.get('kind')), inline=True)
+            if order.get('collateral'):
+                embed.add_field(name=tr(user, 'order.embed.collateral'), value=str(order.get('collateral')), inline=True)
+            embed.timestamp = now
+            embed.set_footer(text=tr(user, 'order.embed.today', time=now.strftime('%H:%M')))
+            await user.send(embed=embed)
+            return True
+        except Exception:
+            traceback.print_exc()
+            return False
+
     async def create_thread(self, server_id: int, channel_id: int, members: list[int], offer: dict):
         if not server_id or not channel_id or not members:
             return Result(error=t('errors.server_channel_members', 'en'))
@@ -214,9 +253,9 @@ class SCMarket(Bot):
                     user = await self.fetch_user(int(member))
                     try:
                         await user.send(
-                            t(
+                            tr(
+                                user,
                                 'dm.offer_invite',
-                                get_locale(user),
                                 invite=invite,
                             )
                         )

@@ -222,6 +222,18 @@
         "in_progress": "In Progress",
         "cancelled": "Cancelled"
       }
+    },
+    "embed": {
+      "items_sold_to": "Items Sold to {buyer}",
+      "discord_user_details": "Discord User Details",
+      "complete_delivery": "Complete the delivery of sold items to {buyer}",
+      "total": "Total",
+      "user_offer": "User Offer",
+      "note_from_buyer": "Note from buyer",
+      "offer": "Offer",
+      "kind": "Kind",
+      "collateral": "Collateral",
+      "today": "Today at {time}"
     }
   },
   "registration": {
