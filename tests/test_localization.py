@@ -16,6 +16,11 @@ class Ctx:
         self.locale = locale
 
 
+class FakeLocale:
+    def __str__(self):
+        return "uk"
+
+
 def flatten(d, prefix=""):
     keys = set()
     for k, v in d.items():
@@ -28,6 +33,11 @@ def flatten(d, prefix=""):
 
 def test_get_locale_preference_interaction():
     ctx = Ctx(interaction=Dummy("uk"))
+    assert get_locale(ctx) == "uk"
+
+
+def test_get_locale_non_string():
+    ctx = Ctx(interaction=Dummy(FakeLocale()))
     assert get_locale(ctx) == "uk"
 
 
