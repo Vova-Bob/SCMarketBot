@@ -7,31 +7,32 @@ import discord
 from discord import app_commands
 from discord.app_commands import checks
 from discord.ext import commands
-from util.i18n import get_locale, t
+from util.i18n import get_locale, t, cmd, option
 
 DISCORD_BACKEND_URL = os.environ.get("DISCORD_BACKEND_URL", "http://web:8081")
 
 
-class Registration(commands.GroupCog, name="register"):
-    channel = app_commands.Group(name="channel",
-                                 description="Register a channel as the channel that will house threads for order fulfillment")
-    server = app_commands.Group(name="server",
-                                description="Register a server as the official server for order fulfillment")
+class Registration(commands.GroupCog):
+    channel = app_commands.Group(**cmd('register.channel'))
+    server = app_commands.Group(**cmd('register.server'))
+
+    def __init__(self, bot):
+        super().__init__(**cmd('register'))
+        self.bot = bot
 
     async def cog_app_command_error(self, interaction: discord.Interaction, error):
         await interaction.response.send_message(str(error))
 
-    @channel.command(name="contractor")
+    @channel.command(**cmd('register.channel.contractor'))
     @checks.has_permissions(administrator=True)
-    @app_commands.describe(name='The name of the contractor')
     async def contractor_channel(
             self, interaction: discord.Interaction,
-            name: str
+            name: str = option('register.channel.contractor', 'name')
     ):
         """Register a channel as the channel that will house threads for order fulfillment for your contractor. Make sure the bot has permission to see the channel and make private threads there."""
         await self.register(interaction, "channel", "contractor", name)
 
-    @channel.command(name="user")
+    @channel.command(**cmd('register.channel.user'))
     @checks.has_permissions(administrator=True)
     async def user_channel(
             self, interaction: discord.Interaction,
@@ -39,17 +40,16 @@ class Registration(commands.GroupCog, name="register"):
         """Register a channel as the channel that will house threads for order fulfillment for your user. Make sure the bot has permission to see the channel and make private threads there."""
         await self.register(interaction, "channel", "user")
 
-    @server.command(name="contractor")
+    @server.command(**cmd('register.server.contractor'))
     @checks.has_permissions(administrator=True)
-    @app_commands.describe(name='The name of the contractor')
     async def contractor_server(
             self, interaction: discord.Interaction,
-            name: str
+            name: str = option('register.server.contractor', 'name')
     ):
         """Register a server as the official server for order fulfillment for your contractor."""
         await self.register(interaction, "server", "contractor", name)
 
-    @server.command(name="user")
+    @server.command(**cmd('register.server.user'))
     @checks.has_permissions(administrator=True)
     async def user_server(
             self, interaction: discord.Interaction,

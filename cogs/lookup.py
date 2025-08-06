@@ -8,23 +8,14 @@ from discord.ext.paginators.button_paginator import ButtonPaginator
 from util.fetch import public_fetch, search_users, search_orgs
 from util.listings import create_market_embed, categories, sorting_methods, sale_types, create_market_embed_individual, \
     display_listings_compact
-from util.i18n import get_locale, t
+from util.i18n import get_locale, t, cmd, option
 
 
 class Lookup(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @app_commands.command(name="search")
-    @app_commands.describe(
-        query='The search query',
-        category='What category the item belongs to',
-        sorting='What order to sort the listings by',
-        sale_type='The method of sale',
-        quantity_available='The minimum quantity available an item must have',
-        min_cost='The minimum cost of items to search',
-        max_cost='The maximum cost of items to search',
-    )
+    @app_commands.command(**cmd('search'))
     @app_commands.choices(
         category=[
             app_commands.Choice(name=item, value=item.lower()) for item in categories
@@ -39,13 +30,13 @@ class Lookup(commands.Cog):
     async def search(
             self,
             interaction: discord.Interaction,
-            query: str,
-            category: app_commands.Choice[str] = '',
-            sorting: app_commands.Choice[str] = 'activity',
-            sale_type: app_commands.Choice[str] = '',
-            quantity_available: int = 1,
-            min_cost: int = 0,
-            max_cost: int = 0,
+            query: str = option('search', 'query'),
+            category: app_commands.Choice[str] = option('search', 'category', ''),
+            sorting: app_commands.Choice[str] = option('search', 'sorting', 'activity'),
+            sale_type: app_commands.Choice[str] = option('search', 'sale_type', ''),
+            quantity_available: int = option('search', 'quantity_available', 1),
+            min_cost: int = option('search', 'min_cost', 0),
+            max_cost: int = option('search', 'max_cost', 0),
     ):
         """Search the site market listings"""
         params = {
@@ -78,17 +69,14 @@ class Lookup(commands.Cog):
         paginator = ButtonPaginator(embeds, author_id=interaction.user.id)
         await paginator.send(interaction)
 
-    lookup = app_commands.Group(name="lookup", description="Look up an org or user's market listings")
+    lookup = app_commands.Group(**cmd('lookup'))
 
-    @lookup.command(name="user")
-    @app_commands.describe(
-        handle='The handle of the user',
-    )
+    @lookup.command(**cmd('lookup.user'))
     async def user_search(
             self,
             interaction: discord.Interaction,
-            handle: str,
-            compact: bool = False,
+            handle: str = option('lookup.user', 'handle'),
+            compact: bool = option('lookup.user', 'compact', False),
     ):
         """Lookup the market listings for a user"""
         try:
@@ -115,15 +103,12 @@ class Lookup(commands.Cog):
             paginator = ButtonPaginator(embeds, author_id=interaction.user.id)
             await paginator.send(interaction)
 
-    @lookup.command(name="org")
-    @app_commands.describe(
-        spectrum_id='The spectrum ID of the org',
-    )
+    @lookup.command(**cmd('lookup.org'))
     async def org_search(
             self,
             interaction: discord.Interaction,
-            spectrum_id: str,
-            compact: bool = False,
+            spectrum_id: str = option('lookup.org', 'spectrum_id'),
+            compact: bool = option('lookup.org', 'compact', False),
     ):
         """Lookup the market listings for an org"""
         try:

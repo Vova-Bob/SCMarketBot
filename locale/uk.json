@@ -1,4 +1,202 @@
 {
+  "commands": {
+    "info": {
+      "name": "info",
+      "description": "Деякі прості деталі про бота."
+    },
+    "search": {
+      "name": "search",
+      "description": "Пошук оголошень на ринку сайту",
+      "options": {
+        "query": {
+          "name": "query",
+          "description": "Пошуковий запит"
+        },
+        "category": {
+          "name": "category",
+          "description": "Категорія, до якої належить товар"
+        },
+        "sorting": {
+          "name": "sorting",
+          "description": "Порядок сортування оголошень"
+        },
+        "sale_type": {
+          "name": "sale_type",
+          "description": "Метод продажу"
+        },
+        "quantity_available": {
+          "name": "quantity_available",
+          "description": "Мінімальна доступна кількість товару"
+        },
+        "min_cost": {
+          "name": "min_cost",
+          "description": "Мінімальна вартість товарів для пошуку"
+        },
+        "max_cost": {
+          "name": "max_cost",
+          "description": "Максимальна вартість товарів для пошуку"
+        }
+      }
+    },
+    "lookup": {
+      "name": "lookup",
+      "description": "Переглянути оголошення користувача або організації на ринку",
+      "user": {
+        "name": "user",
+        "description": "Переглянути оголошення користувача",
+        "options": {
+          "handle": {
+            "name": "handle",
+            "description": "Нікнейм користувача"
+          },
+          "compact": {
+            "name": "compact",
+            "description": "Показувати оголошення у компактному вигляді"
+          }
+        }
+      },
+      "org": {
+        "name": "org",
+        "description": "Переглянути оголошення організації",
+        "options": {
+          "spectrum_id": {
+            "name": "spectrum_id",
+            "description": "Spectrum ID організації"
+          },
+          "compact": {
+            "name": "compact",
+            "description": "Показувати оголошення у компактному вигляді"
+          }
+        }
+      }
+    },
+    "order": {
+      "name": "order",
+      "description": "Керування замовленнями",
+      "status": {
+        "name": "status",
+        "description": "Встановити новий статус для замовлення в поточному потоці",
+        "options": {
+          "order": {
+            "name": "order",
+            "description": "Замовлення, яке потрібно оновити"
+          },
+          "newstatus": {
+            "name": "newstatus",
+            "description": "Новий статус замовлення"
+          }
+        }
+      }
+    },
+    "register": {
+      "name": "register",
+      "description": "Реєстрація каналів та серверів для виконання замовлень",
+      "channel": {
+        "name": "channel",
+        "description": "Зареєструвати канал, що міститиме потоки для виконання замовлень",
+        "contractor": {
+          "name": "contractor",
+          "description": "Зареєструвати канал для вашого підрядника",
+          "options": {
+            "name": {
+              "name": "name",
+              "description": "Ім'я підрядника"
+            }
+          }
+        },
+        "user": {
+          "name": "user",
+          "description": "Зареєструвати канал для вашого користувача"
+        }
+      },
+      "server": {
+        "name": "server",
+        "description": "Зареєструвати сервер як офіційний сервер для виконання замовлень",
+        "contractor": {
+          "name": "contractor",
+          "description": "Зареєструвати сервер для вашого підрядника",
+          "options": {
+            "name": {
+              "name": "name",
+              "description": "Ім'я підрядника"
+            }
+          }
+        },
+        "user": {
+          "name": "user",
+          "description": "Зареєструвати сервер для вашого користувача"
+        }
+      }
+    },
+    "stock": {
+      "name": "stock",
+      "description": "Керування запасами оголошень",
+      "set": {
+        "name": "set",
+        "description": "Встановити кількість запасу для оголошення",
+        "options": {
+          "owner": {
+            "name": "owner",
+            "description": "Власник оголошення, яке ви хочете оновити. Або ви, або один з ваших підрядників"
+          },
+          "listing": {
+            "name": "listing",
+            "description": "Оголошення для змін"
+          },
+          "quantity": {
+            "name": "quantity",
+            "description": "Нова кількість для оголошення"
+          }
+        }
+      },
+      "add": {
+        "name": "add",
+        "description": "Додати до запасу оголошення",
+        "options": {
+          "owner": {
+            "name": "owner",
+            "description": "Власник оголошення, яке ви хочете оновити. Або ви, або один з ваших підрядників"
+          },
+          "listing": {
+            "name": "listing",
+            "description": "Оголошення для змін"
+          },
+          "quantity": {
+            "name": "quantity",
+            "description": "Кількість, яку потрібно додати до запасу"
+          }
+        }
+      },
+      "sub": {
+        "name": "sub",
+        "description": "Відняти від запасу оголошення",
+        "options": {
+          "owner": {
+            "name": "owner",
+            "description": "Власник оголошення, яке ви хочете оновити. Або ви, або один з ваших підрядників"
+          },
+          "listing": {
+            "name": "listing",
+            "description": "Оголошення для змін"
+          },
+          "quantity": {
+            "name": "quantity",
+            "description": "Кількість, яку потрібно відняти від запасу"
+          }
+        }
+      },
+      "view": {
+        "name": "view",
+        "description": "Переглянути запас оголошень",
+        "options": {
+          "owner": {
+            "name": "owner",
+            "description": "Власник оголошення, яке ви хочете оновити. Або ви, або один з ваших підрядників"
+          }
+        }
+      }
+    }
+  },
   "info": {
     "author": "Автор",
     "servers": "Сервери",

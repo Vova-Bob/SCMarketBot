@@ -8,18 +8,15 @@ from discord import app_commands
 from discord.ext import commands
 
 from util.fetch import internal_post, get_user_orders
-from util.i18n import get_locale, t
+from util.i18n import get_locale, t, cmd, option
 
 
 class order(commands.GroupCog):
     def __init__(self, bot):
+        super().__init__(**cmd('order'))
         self.bot = bot
 
-    @app_commands.command(name="status")
-    @app_commands.describe(
-        order='The order to update',
-        newstatus='The new status to set the order to',
-    )
+    @app_commands.command(**cmd('order.status'))
     @app_commands.choices(
         newstatus=[
             app_commands.Choice(name=name, value=value) for name, value in
@@ -29,8 +26,8 @@ class order(commands.GroupCog):
     async def update_status(
             self,
             interaction: discord.Interaction,
-            newstatus: str,
-            order: str = None,
+            newstatus: str = option('order.status', 'newstatus'),
+            order: str = option('order.status', 'order', None),
     ):
         """Set the new status for the order in the current thread"""
         order_payload = json.loads(order)
