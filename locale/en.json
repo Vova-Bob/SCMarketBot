@@ -1,4 +1,202 @@
 {
+  "commands": {
+    "info": {
+      "name": "info",
+      "description": "Some simple details about the bot."
+    },
+    "search": {
+      "name": "search",
+      "description": "Search the site market listings",
+      "options": {
+        "query": {
+          "name": "query",
+          "description": "The search query"
+        },
+        "category": {
+          "name": "category",
+          "description": "What category the item belongs to"
+        },
+        "sorting": {
+          "name": "sorting",
+          "description": "What order to sort the listings by"
+        },
+        "sale_type": {
+          "name": "sale_type",
+          "description": "The method of sale"
+        },
+        "quantity_available": {
+          "name": "quantity_available",
+          "description": "The minimum quantity available an item must have"
+        },
+        "min_cost": {
+          "name": "min_cost",
+          "description": "The minimum cost of items to search"
+        },
+        "max_cost": {
+          "name": "max_cost",
+          "description": "The maximum cost of items to search"
+        }
+      }
+    },
+    "lookup": {
+      "name": "lookup",
+      "description": "Look up an org or user's market listings",
+      "user": {
+        "name": "user",
+        "description": "Lookup the market listings for a user",
+        "options": {
+          "handle": {
+            "name": "handle",
+            "description": "The handle of the user"
+          },
+          "compact": {
+            "name": "compact",
+            "description": "Display listings in compact form"
+          }
+        }
+      },
+      "org": {
+        "name": "org",
+        "description": "Lookup the market listings for an org",
+        "options": {
+          "spectrum_id": {
+            "name": "spectrum_id",
+            "description": "The spectrum ID of the org"
+          },
+          "compact": {
+            "name": "compact",
+            "description": "Display listings in compact form"
+          }
+        }
+      }
+    },
+    "order": {
+      "name": "order",
+      "description": "Manage orders",
+      "status": {
+        "name": "status",
+        "description": "Set the new status for the order in the current thread",
+        "options": {
+          "order": {
+            "name": "order",
+            "description": "The order to update"
+          },
+          "newstatus": {
+            "name": "newstatus",
+            "description": "The new status to set the order to"
+          }
+        }
+      }
+    },
+    "register": {
+      "name": "register",
+      "description": "Register channels and servers for order fulfillment",
+      "channel": {
+        "name": "channel",
+        "description": "Register a channel as the channel that will house threads for order fulfillment",
+        "contractor": {
+          "name": "contractor",
+          "description": "Register a channel for your contractor",
+          "options": {
+            "name": {
+              "name": "name",
+              "description": "The name of the contractor"
+            }
+          }
+        },
+        "user": {
+          "name": "user",
+          "description": "Register a channel for your user"
+        }
+      },
+      "server": {
+        "name": "server",
+        "description": "Register a server as the official server for order fulfillment",
+        "contractor": {
+          "name": "contractor",
+          "description": "Register a server for your contractor",
+          "options": {
+            "name": {
+              "name": "name",
+              "description": "The name of the contractor"
+            }
+          }
+        },
+        "user": {
+          "name": "user",
+          "description": "Register a server for your user"
+        }
+      }
+    },
+    "stock": {
+      "name": "stock",
+      "description": "Manage listing stock",
+      "set": {
+        "name": "set",
+        "description": "Set the stock quantity for a given market listing",
+        "options": {
+          "owner": {
+            "name": "owner",
+            "description": "The owner of the listing you want to update. Either you or one of your contractors"
+          },
+          "listing": {
+            "name": "listing",
+            "description": "The listing to modify"
+          },
+          "quantity": {
+            "name": "quantity",
+            "description": "The new quantity to set for the listing"
+          }
+        }
+      },
+      "add": {
+        "name": "add",
+        "description": "Add to the stock quantity for a given market listing",
+        "options": {
+          "owner": {
+            "name": "owner",
+            "description": "The owner of the listing you want to update. Either you or one of your contractors"
+          },
+          "listing": {
+            "name": "listing",
+            "description": "The listing to modify"
+          },
+          "quantity": {
+            "name": "quantity",
+            "description": "The quantity to add to the listing's stock"
+          }
+        }
+      },
+      "sub": {
+        "name": "sub",
+        "description": "Subtract from the stock quantity for a given market listing",
+        "options": {
+          "owner": {
+            "name": "owner",
+            "description": "The owner of the listing you want to update. Either you or one of your contractors"
+          },
+          "listing": {
+            "name": "listing",
+            "description": "The listing to modify"
+          },
+          "quantity": {
+            "name": "quantity",
+            "description": "The quantity to subtract from the listing's stock"
+          }
+        }
+      },
+      "view": {
+        "name": "view",
+        "description": "View the stock quantity for a given market listing",
+        "options": {
+          "owner": {
+            "name": "owner",
+            "description": "The owner of the listing you want to update. Either you or one of your contractors"
+          }
+        }
+      }
+    }
+  },
   "info": {
     "author": "Author",
     "servers": "Servers",

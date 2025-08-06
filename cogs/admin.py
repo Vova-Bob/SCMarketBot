@@ -4,16 +4,15 @@ import discord
 from discord import app_commands
 from discord.ext import commands
 
-from util.i18n import get_locale, t
+from util.i18n import get_locale, t, cmd
 
 
 class Admin(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @app_commands.command()
+    @app_commands.command(**cmd('info'))
     async def info(self, interaction: discord.Interaction):
-        """Some simple details about the bot."""
         locale = get_locale(interaction)
         me = self.bot.user if not interaction.guild else interaction.guild.me
         appinfo = await self.bot.application_info()
