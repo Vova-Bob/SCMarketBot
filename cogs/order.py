@@ -8,7 +8,7 @@ from discord import app_commands
 from discord.ext import commands
 
 from util.fetch import internal_post, get_user_orders
-from util.i18n import get_locale, t, cmd, option
+from util.i18n import tr, cmd, option
 
 
 class order(commands.GroupCog):
@@ -23,14 +23,18 @@ class order(commands.GroupCog):
             [("Fulfilled", "fulfilled"), ("In Progress", "in-progress"), ("Cancelled", "cancelled")]
         ],
     )
+    @app_commands.describe(
+        newstatus=option('order.status', 'newstatus'),
+        order=option('order.status', 'order'),
+    )
     async def update_status(
             self,
             interaction: discord.Interaction,
-            newstatus: str = option('order.status', 'newstatus'),
-            order: str = option('order.status', 'order', None),
+            newstatus: str,
+            order: str = None,
     ):
         """Set the new status for the order in the current thread"""
-        order_payload = json.loads(order)
+        order_payload = json.loads(order) if order else None
         if order is None:
             if isinstance(interaction.channel, discord.Thread):
                 response = await internal_post("/threads/order/status",
@@ -41,8 +45,7 @@ class order(commands.GroupCog):
                                                },
                                                session=self.bot.session)
             else:
-                locale = get_locale(interaction)
-                await interaction.response.send_message(t('order.no_order', locale))
+                await interaction.response.send_message(tr(interaction, 'order.no_order'))
                 return
         else:
             response = await internal_post(
@@ -55,16 +58,15 @@ class order(commands.GroupCog):
                 session=self.bot.session
             )
 
-        locale = get_locale(interaction)
         if response.get("error"):
             await interaction.response.send_message(response['error'])
         else:
             if order:
                 await interaction.response.send_message(
-                    t('order.success_specific', locale, status=newstatus, title=order_payload['t'])
+                    tr(interaction, 'order.success_specific', status=newstatus, title=order_payload['t'])
                 )
             else:
-                await interaction.response.send_message(t('order.success', locale))
+                await interaction.response.send_message(tr(interaction, 'order.success'))
 
     @update_status.autocomplete('order')
     async def update_status_order_autocomplete(

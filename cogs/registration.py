@@ -7,7 +7,7 @@ import discord
 from discord import app_commands
 from discord.app_commands import checks
 from discord.ext import commands
-from util.i18n import get_locale, t, cmd, option
+from util.i18n import tr, cmd, option
 
 DISCORD_BACKEND_URL = os.environ.get("DISCORD_BACKEND_URL", "http://web:8081")
 
@@ -25,9 +25,10 @@ class Registration(commands.GroupCog):
 
     @channel.command(**cmd('register.channel.contractor'))
     @checks.has_permissions(administrator=True)
+    @app_commands.describe(name=option('register.channel.contractor', 'name'))
     async def contractor_channel(
             self, interaction: discord.Interaction,
-            name: str = option('register.channel.contractor', 'name')
+            name: str
     ):
         """Register a channel as the channel that will house threads for order fulfillment for your contractor. Make sure the bot has permission to see the channel and make private threads there."""
         await self.register(interaction, "channel", "contractor", name)
@@ -42,9 +43,10 @@ class Registration(commands.GroupCog):
 
     @server.command(**cmd('register.server.contractor'))
     @checks.has_permissions(administrator=True)
+    @app_commands.describe(name=option('register.server.contractor', 'name'))
     async def contractor_server(
             self, interaction: discord.Interaction,
-            name: str = option('register.server.contractor', 'name')
+            name: str
     ):
         """Register a server as the official server for order fulfillment for your contractor."""
         await self.register(interaction, "server", "contractor", name)
@@ -76,11 +78,9 @@ class Registration(commands.GroupCog):
                 except Exception as e:
                     traceback.print_exc()
                     print(text)
-                    locale = get_locale(interaction)
-                    return await interaction.response.send_message(t('registration.unexpected', locale), ephemeral=True)
+                    return await interaction.response.send_message(tr(interaction, 'registration.unexpected'), ephemeral=True)
 
-        locale = get_locale(interaction)
         if resp.ok:
-            await interaction.response.send_message(t('registration.success', locale, type=type, entity=entity), ephemeral=True)
+            await interaction.response.send_message(tr(interaction, 'registration.success', type=type, entity=entity), ephemeral=True)
         else:
-            await interaction.response.send_message(t('registration.fail', locale, error=result.get('error')), ephemeral=True)
+            await interaction.response.send_message(tr(interaction, 'registration.fail', error=result.get('error')), ephemeral=True)

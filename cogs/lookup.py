@@ -8,7 +8,7 @@ from discord.ext.paginators.button_paginator import ButtonPaginator
 from util.fetch import public_fetch, search_users, search_orgs
 from util.listings import create_market_embed, categories, sorting_methods, sale_types, create_market_embed_individual, \
     display_listings_compact
-from util.i18n import get_locale, t, cmd, option
+from util.i18n import get_locale, tr, cmd, option
 
 
 class Lookup(commands.Cog):
@@ -27,16 +27,25 @@ class Lookup(commands.Cog):
             app_commands.Choice(name=item, value=item.lower()) for item in sale_types
         ],
     )
+    @app_commands.describe(
+        query=option('search', 'query'),
+        category=option('search', 'category'),
+        sorting=option('search', 'sorting'),
+        sale_type=option('search', 'sale_type'),
+        quantity_available=option('search', 'quantity_available'),
+        min_cost=option('search', 'min_cost'),
+        max_cost=option('search', 'max_cost'),
+    )
     async def search(
             self,
             interaction: discord.Interaction,
-            query: str = option('search', 'query'),
-            category: app_commands.Choice[str] = option('search', 'category', ''),
-            sorting: app_commands.Choice[str] = option('search', 'sorting', 'activity'),
-            sale_type: app_commands.Choice[str] = option('search', 'sale_type', ''),
-            quantity_available: int = option('search', 'quantity_available', 1),
-            min_cost: int = option('search', 'min_cost', 0),
-            max_cost: int = option('search', 'max_cost', 0),
+            query: str,
+            category: str = '',
+            sorting: str = 'activity',
+            sale_type: str = '',
+            quantity_available: int = 1,
+            min_cost: int = 0,
+            max_cost: int = 0,
     ):
         """Search the site market listings"""
         params = {
@@ -64,7 +73,7 @@ class Lookup(commands.Cog):
         locale = get_locale(interaction)
         embeds = [create_market_embed(item, locale) for item in result['listings'] if item['listing']['quantity_available']]
         if not embeds:
-            await interaction.response.send_message(t('search.no_results', locale))
+            await interaction.response.send_message(tr(interaction, 'search.no_results'))
 
         paginator = ButtonPaginator(embeds, author_id=interaction.user.id)
         await paginator.send(interaction)
@@ -72,11 +81,12 @@ class Lookup(commands.Cog):
     lookup = app_commands.Group(**cmd('lookup'))
 
     @lookup.command(**cmd('lookup.user'))
+    @app_commands.describe(handle=option('lookup.user', 'handle'), compact=option('lookup.user', 'compact'))
     async def user_search(
             self,
             interaction: discord.Interaction,
-            handle: str = option('lookup.user', 'handle'),
-            compact: bool = option('lookup.user', 'compact', False),
+            handle: str,
+            compact: bool = False,
     ):
         """Lookup the market listings for a user"""
         try:
@@ -85,8 +95,7 @@ class Lookup(commands.Cog):
                 session=self.bot.session,
             )
         except:
-            locale = get_locale(interaction)
-            await interaction.response.send_message(t('lookup.invalid_user', locale))
+            await interaction.response.send_message(tr(interaction, 'lookup.invalid_user'))
             return
 
         if compact:
@@ -97,18 +106,19 @@ class Lookup(commands.Cog):
                       item['listing']['quantity_available']]
 
             if not embeds:
-                await interaction.response.send_message(t('lookup.no_listings', locale))
+                await interaction.response.send_message(tr(interaction, 'lookup.no_listings'))
                 return
 
             paginator = ButtonPaginator(embeds, author_id=interaction.user.id)
             await paginator.send(interaction)
 
     @lookup.command(**cmd('lookup.org'))
+    @app_commands.describe(spectrum_id=option('lookup.org', 'spectrum_id'), compact=option('lookup.org', 'compact'))
     async def org_search(
             self,
             interaction: discord.Interaction,
-            spectrum_id: str = option('lookup.org', 'spectrum_id'),
-            compact: bool = option('lookup.org', 'compact', False),
+            spectrum_id: str,
+            compact: bool = False,
     ):
         """Lookup the market listings for an org"""
         try:
@@ -117,8 +127,7 @@ class Lookup(commands.Cog):
                 session=self.bot.session,
             )
         except:
-            locale = get_locale(interaction)
-            await interaction.response.send_message(t('lookup.invalid_org', locale))
+            await interaction.response.send_message(tr(interaction, 'lookup.invalid_org'))
             return
 
         if compact:
@@ -129,7 +138,7 @@ class Lookup(commands.Cog):
                       item['listing']['quantity_available']]
 
             if not embeds:
-                await interaction.response.send_message(t('lookup.no_org_listings', locale))
+                await interaction.response.send_message(tr(interaction, 'lookup.no_org_listings'))
                 return
 
             paginator = ButtonPaginator(embeds, author_id=interaction.user.id)
