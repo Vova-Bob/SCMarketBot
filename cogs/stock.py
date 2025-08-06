@@ -14,7 +14,7 @@ from util.i18n import tr, cmd, option
 
 class stock(commands.GroupCog):
     def __init__(self, bot):
-        super().__init__(**cmd('stock'))
+        super().__init__()
         self.bot = bot
 
     @app_commands.command(**cmd('stock.set'))

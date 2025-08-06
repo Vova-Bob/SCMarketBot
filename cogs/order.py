@@ -13,7 +13,7 @@ from util.i18n import tr, cmd, option, t
 
 class order(commands.GroupCog):
     def __init__(self, bot):
-        super().__init__(**cmd('order'))
+        super().__init__()
         self.bot = bot
 
     @app_commands.command(**cmd('order.status'))

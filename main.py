@@ -2,6 +2,10 @@ import logging
 import os
 import traceback
 
+from dotenv import load_dotenv
+
+load_dotenv()
+
 import aiohttp
 import discord
 from aiohttp import web
@@ -16,9 +20,6 @@ from cogs.stock import stock
 from util.api_server import create_api
 from util.result import Result
 from util.i18n import t, tr
-from dotenv import load_dotenv
-
-load_dotenv()
 
 intents = discord.Intents.default()
 intents.members = True
