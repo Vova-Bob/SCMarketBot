@@ -227,6 +227,8 @@
       "items_sold_to": "Items Sold to {buyer}",
       "discord_user_details": "Discord User Details",
       "complete_delivery": "Complete the delivery of sold items to {buyer}",
+      "item_field": "{item}",
+      "item_quantity": "Quantity: {quantity}",
       "total": "Total",
       "user_offer": "User Offer",
       "note_from_buyer": "Note from buyer",
