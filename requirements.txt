@@ -3,4 +3,5 @@ discord.py
 aiohttp
 humanize
 ujson
+python-dotenv
 pytest
