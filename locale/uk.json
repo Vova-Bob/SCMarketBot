@@ -227,6 +227,8 @@
       "items_sold_to": "Товари продані для {buyer}",
       "discord_user_details": "Деталі користувача Discord",
       "complete_delivery": "Завершіть доставку проданих товарів для {buyer}",
+      "item_field": "{item}",
+      "item_quantity": "Кількість: {quantity}",
       "total": "Разом",
       "user_offer": "Пропозиція користувача",
       "note_from_buyer": "Повідомлення від покупця",

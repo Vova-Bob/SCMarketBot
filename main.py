@@ -184,7 +184,11 @@ class SCMarket(Bot):
                 inline=False,
             )
             for item in order.get('items', []):
-                embed.add_field(name=item.get('name'), value=str(item.get('quantity', '')), inline=False)
+                embed.add_field(
+                    name=tr(user, 'order.embed.item_field', item=item.get('name')),
+                    value=tr(user, 'order.embed.item_quantity', quantity=str(item.get('quantity', ''))),
+                    inline=False,
+                )
             if order.get('total') is not None:
                 embed.add_field(name=tr(user, 'order.embed.total'), value=str(order.get('total')), inline=True)
             if order.get('user_offer') is not None:
