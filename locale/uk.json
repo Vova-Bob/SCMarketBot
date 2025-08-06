@@ -1,0 +1,44 @@
+{
+  "info": {
+    "author": "Автор",
+    "servers": "Сервери",
+    "footer": "Створено на discord.py",
+    "server_count": "{count} серверів"
+  },
+  "search": {
+    "no_results": "Нічого не знайдено"
+  },
+  "lookup": {
+    "invalid_user": "Невірний користувач",
+    "invalid_org": "Невірна організація",
+    "no_org_listings": "Немає оголошень для організації",
+    "no_listings": "Немає оголошень для користувача"
+  },
+  "order": {
+    "no_order": "У цьому каналі немає замовлення. Будь ласка, виберіть замовлення для оновлення.",
+    "success_specific": "Статус замовлення '{title}' змінено на {status}",
+    "success": "Статус замовлення успішно оновлено"
+  },
+  "registration": {
+    "unexpected": "Сталася неочікувана помилка",
+    "success": "Зареєстровано {type} для {entity}",
+    "fail": "Не вдалося зареєструвати канал: {error}"
+  },
+  "stock": {
+    "no_listings": "Немає оголошень для показу",
+    "stock_set": "Запас для {title} встановлено з {old} до {new}."
+  },
+  "fields": {
+    "item_type": "Тип товару",
+    "minimum_price": "Мінімальна ціна",
+    "maximum_price": "Максимальна ціна",
+    "price": "Ціна",
+    "seller": "Продавець",
+    "auction_end": "Кінець аукціону",
+    "quantity_available": "Доступно",
+    "my_stock": "Мій запас",
+    "qt": "К-ть",
+    "item": "Товар",
+    "price_label": "Ціна"
+  }
+}

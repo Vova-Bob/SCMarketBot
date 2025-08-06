@@ -9,6 +9,7 @@ from discord.ext import commands
 
 from util.fetch import internal_post, get_user_listings, get_user_orgs, get_org_listings
 from util.listings import display_listings_compact
+from util.i18n import get_locale, t
 
 
 class stock(commands.GroupCog):
@@ -77,7 +78,7 @@ class stock(commands.GroupCog):
             json=payload,
             session=self.bot.session
         )
-
+        locale = get_locale(interaction)
         if response.get("error"):
             await interaction.response.send_message(response['error'])
         else:
@@ -90,7 +91,7 @@ class stock(commands.GroupCog):
                 newquantity = quantity
 
             await interaction.response.send_message(
-                f"Stock for [{listing_payload['t']}](<https://sc-market.space/market/{listing_payload['l']}>) has been set from `{listing_payload['q']}` to `{newquantity}`."
+                t('stock.stock_set', locale, title=listing_payload['t'], old=listing_payload['q'], new=newquantity)
             )
 
     @app_commands.command(name="view")
@@ -111,7 +112,8 @@ class stock(commands.GroupCog):
             listings = await get_user_listings(interaction.user.id, session=self.bot.session)
 
         if not listings:
-            await interaction.response.send_message("No listings to display", ephemeral=True)
+            locale = get_locale(interaction)
+            await interaction.response.send_message(t('stock.no_listings', locale), ephemeral=True)
             return
 
         await display_listings_compact(interaction, listings)

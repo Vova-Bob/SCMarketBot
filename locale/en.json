@@ -1,0 +1,44 @@
+{
+  "info": {
+    "author": "Author",
+    "servers": "Servers",
+    "footer": "Made with discord.py",
+    "server_count": "{count} servers"
+  },
+  "search": {
+    "no_results": "No results found"
+  },
+  "lookup": {
+    "invalid_user": "Invalid user",
+    "invalid_org": "Invalid org",
+    "no_org_listings": "No listings to display for org",
+    "no_listings": "No listings to display for user"
+  },
+  "order": {
+    "no_order": "No order in this channel. Please select an order to update.",
+    "success_specific": "Successfully updated the status to {status} for order '{title}'",
+    "success": "Successfully updated status for the order"
+  },
+  "registration": {
+    "unexpected": "An unexpected error occurred",
+    "success": "Registered {type} for {entity}",
+    "fail": "Failed to register channel: {error}"
+  },
+  "stock": {
+    "no_listings": "No listings to display",
+    "stock_set": "Stock for {title} has been set from {old} to {new}."
+  },
+  "fields": {
+    "item_type": "Item Type",
+    "minimum_price": "Minimum Price",
+    "maximum_price": "Maximum Price",
+    "price": "Price",
+    "seller": "Seller",
+    "auction_end": "Auction End",
+    "quantity_available": "Quantity Available",
+    "my_stock": "My Stock",
+    "qt": "Qt.",
+    "item": "Item",
+    "price_label": "Price"
+  }
+}

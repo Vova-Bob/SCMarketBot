@@ -8,6 +8,7 @@ from discord import app_commands
 from discord.ext import commands
 
 from util.fetch import internal_post, get_user_orders
+from util.i18n import get_locale, t
 
 
 class order(commands.GroupCog):
@@ -43,7 +44,8 @@ class order(commands.GroupCog):
                                                },
                                                session=self.bot.session)
             else:
-                await interaction.response.send_message("No order in this channel. Please select an order to update.")
+                locale = get_locale(interaction)
+                await interaction.response.send_message(t('order.no_order', locale))
                 return
         else:
             response = await internal_post(
@@ -56,15 +58,16 @@ class order(commands.GroupCog):
                 session=self.bot.session
             )
 
+        locale = get_locale(interaction)
         if response.get("error"):
             await interaction.response.send_message(response['error'])
         else:
             if order:
                 await interaction.response.send_message(
-                    f"Successfully updated the status to {newstatus} for order '[{order_payload['t']}](<https://sc-market.space/contract/{order_payload['o']}>)'"
+                    t('order.success_specific', locale, status=newstatus, title=order_payload['t'])
                 )
             else:
-                await interaction.response.send_message(f"Successfully updated status for the order")
+                await interaction.response.send_message(t('order.success', locale))
 
     @update_status.autocomplete('order')
     async def update_status_order_autocomplete(
