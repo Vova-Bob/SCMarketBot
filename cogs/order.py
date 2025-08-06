@@ -22,17 +22,14 @@ class order(commands.GroupCog):
             app_commands.Choice(
                 name=t('order.status.choices.fulfilled', 'en'),
                 value='fulfilled',
-                name_localizations={'uk': t('order.status.choices.fulfilled', 'uk')},
             ),
             app_commands.Choice(
                 name=t('order.status.choices.in_progress', 'en'),
                 value='in-progress',
-                name_localizations={'uk': t('order.status.choices.in_progress', 'uk')},
             ),
             app_commands.Choice(
                 name=t('order.status.choices.cancelled', 'en'),
                 value='cancelled',
-                name_localizations={'uk': t('order.status.choices.cancelled', 'uk')},
             ),
         ],
     )

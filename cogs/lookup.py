@@ -21,7 +21,6 @@ class Lookup(commands.Cog):
             app_commands.Choice(
                 name=t(f"categories.{item}", 'en'),
                 value=item,
-                name_localizations={'uk': t(f"categories.{item}", 'uk')},
             )
             for item in categories
         ],
@@ -29,7 +28,6 @@ class Lookup(commands.Cog):
             app_commands.Choice(
                 name=t(value, 'en'),
                 value=key,
-                name_localizations={'uk': t(value, 'uk')},
             )
             for key, value in sorting_methods.items()
         ],
@@ -37,7 +35,6 @@ class Lookup(commands.Cog):
             app_commands.Choice(
                 name=t(f"sale_types.{item}", 'en'),
                 value=item,
-                name_localizations={'uk': t(f"sale_types.{item}", 'uk')},
             )
             for item in sale_types
         ],
