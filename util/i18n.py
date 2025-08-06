@@ -67,9 +67,7 @@ def option(command_key: str, option_name: str) -> str:
     remain centralized alongside other translations. Only the English strings
     are used for command registration in accordance with discord.py 2.5.2.
     """
-
     desc = t(f'commands.{command_key}.options.{option_name}.description', 'en')
     if desc == f'commands.{command_key}.options.{option_name}.description':
         desc = ''
     return desc
-
