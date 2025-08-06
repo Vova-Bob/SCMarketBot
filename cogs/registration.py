@@ -17,7 +17,7 @@ class Registration(commands.GroupCog):
     server = app_commands.Group(**cmd('register.server'))
 
     def __init__(self, bot):
-        super().__init__(**cmd('register'))
+        super().__init__()
         self.bot = bot
 
     async def cog_app_command_error(self, interaction: discord.Interaction, error):
