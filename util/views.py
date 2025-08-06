@@ -3,18 +3,23 @@ from typing import Tuple, List
 
 import discord.ui
 
+from util.i18n import tr
+
 
 class SelectItem(discord.ui.Select):
-    def __init__(self, choices: List[Tuple[str, str, str]], min_values=1, max_values=1, placeholder='Select status...'):
+    def __init__(self, choices: List[Tuple[str, str, str]], min_values=1, max_values=1, placeholder: str = ''):
         super().__init__(
-            min_values=min_values, max_values=max_values, placeholder=placeholder,
+            min_values=min_values,
+            max_values=max_values,
+            placeholder=placeholder,
             options=[
-                discord.SelectOption(label=label,
-                                     description=description[:97] + "..."[
-                                                                    :100 - len(description)] if description else None,
-                                     value=value)
+                discord.SelectOption(
+                    label=label,
+                    description=description[:97] + "..."[:100 - len(description)] if description else None,
+                    value=value,
+                )
                 for label, description, value in choices
-            ]
+            ],
         )
 
     async def callback(self, interaction: discord.Interaction):
@@ -26,7 +31,8 @@ class EntrySpec:
     choices: List[Tuple[str, str, str]]
     min_values: int = 1
     max_values: int = 1
-    placeholder: str = 'Select status...'
+    # Placeholder is a translation key resolved when the view is constructed.
+    placeholder: str = 'views.select_status'
 
 
 class UpdateView(discord.ui.View):
@@ -35,14 +41,21 @@ class UpdateView(discord.ui.View):
         self.interaction = interaction
         self.selects = []
         for spec in specs:
-            item = SelectItem(spec.choices, spec.min_values, spec.max_values, spec.placeholder)
+            item = SelectItem(
+                spec.choices,
+                spec.min_values,
+                spec.max_values,
+                tr(interaction, spec.placeholder),
+            )
             self.selects.append(item)
             self.add_item(item)
         self.callback = callback
+        # Localize button label
+        self.submit.label = tr(interaction, 'views.update_button')
 
     async def send(self):
         await self.interaction.response.send_message(view=self, ephemeral=True)
 
-    @discord.ui.button(label='Update')
+    @discord.ui.button()
     async def submit(self, interaction: discord.Interaction, button: discord.ui.Button):
         await self.callback(interaction, *[item.values for item in self.selects])

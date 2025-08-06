@@ -215,7 +215,14 @@
   "order": {
     "no_order": "No order in this channel. Please select an order to update.",
     "success_specific": "Successfully updated the status to {status} for order '{title}'",
-    "success": "Successfully updated status for the order"
+    "success": "Successfully updated status for the order",
+    "status": {
+      "choices": {
+        "fulfilled": "Fulfilled",
+        "in_progress": "In Progress",
+        "cancelled": "Cancelled"
+      }
+    }
   },
   "registration": {
     "unexpected": "An unexpected error occurred",
@@ -224,7 +231,9 @@
   },
   "stock": {
     "no_listings": "No listings to display",
-    "stock_set": "Stock for {title} has been set from {old} to {new}."
+    "stock_set": "Stock for {title} has been set from {old} to {new}.",
+    "available": "available",
+    "me": "Me"
   },
   "fields": {
     "item_type": "Item Type",
@@ -237,6 +246,50 @@
     "my_stock": "My Stock",
     "qt": "Qt.",
     "item": "Item",
-    "price_label": "Price"
+    "price_label": "Price",
+    "ending": "Ending {time}"
+  },
+  "categories": {
+    "armor": "Armor",
+    "clothing": "Clothing",
+    "weapon": "Weapon",
+    "paint": "Paint",
+    "bundle": "Bundle",
+    "flair": "Flair",
+    "addon": "Addon",
+    "consumable": "Consumable",
+    "other": "Other"
+  },
+  "sorting": {
+    "title": "Title",
+    "price_low": "Price (Low to High)",
+    "price_high": "Price (High to Low)",
+    "quantity_low": "Quantity Available (Low to High)",
+    "quantity_high": "Quantity Available (High to Low)",
+    "date_new": "Date Listed (Old to New)",
+    "date_old": "Date Listed (New to Old)",
+    "activity": "Recent Activity",
+    "rating": "Rating (High to Low)"
+  },
+  "sale_types": {
+    "aggregate": "Aggregate",
+    "auction": "Auction",
+    "sale": "Sale"
+  },
+  "views": {
+    "select_status": "Select status...",
+    "update_button": "Update"
+  },
+  "dm": {
+    "offer_invite": "You submitted an offer on SC Market. Please join the fulfillment server to communicate directly with the seller: {invite}"
+  },
+  "errors": {
+    "server_channel_members": "Server or Channel or Members are not configured",
+    "bot_not_in_guild": "Bot is not in the configured guild",
+    "thread_channel_missing": "The configured thread channel no longer exists",
+    "no_view_perm": "The bot does not have permission to view the configured thread channel",
+    "invalid_thread_data": "The bot received invalid data from Discord when attempting to fetch the configured thread channel",
+    "no_create_thread_perm": "The bot does not have permission to create threads in the configured channel",
+    "unknown": "An unknown error occurred"
   }
 }
