@@ -3,7 +3,7 @@ import aiohttp
 from cogs.registration import DISCORD_BACKEND_URL
 
 
-async def public_fetch(url, params=None, session=None):
+async def public_fetch(url, params=None, session=None, return_type=dict):
     tempsession = None
     try:
         if session is None:
@@ -11,10 +11,12 @@ async def public_fetch(url, params=None, session=None):
         else:
             tempsession = session
 
-        async with session.get(
+        async with tempsession.get(
                 f"https://api.sc-market.space/api{url}",
                 params=params
         ) as resp:
+            if resp.status // 100 != 2:
+                return return_type()
             return await resp.json()
     finally:
         if session is None and tempsession is not None:
@@ -29,7 +31,7 @@ async def internal_fetch(url, params=None, session=None):
         else:
             tempsession = session
 
-        async with session.get(
+        async with tempsession.get(
                 f"{DISCORD_BACKEND_URL}{url}",
                 params=params
         ) as resp:
@@ -47,7 +49,7 @@ async def internal_post(url, params=None, json=None, session=None):
         else:
             tempsession = session
 
-        async with session.post(
+        async with tempsession.post(
                 f"{DISCORD_BACKEND_URL}{url}",
                 params=params,
                 json=json,
@@ -79,10 +81,10 @@ async def get_user_orgs(discord_id, session=None):
 
 
 async def search_users(query, session=None):
-    response = await public_fetch(f"/profile/search/{query}", session=session)
-    return response
+    response = await public_fetch(f"/profile/search/{query}", session=session, return_type=list)
+    return response if isinstance(response, list) else []
 
 
 async def search_orgs(query, session=None):
     response = await public_fetch(f"/contractors", params=dict(query=query, sorting='name'), session=session)
-    return response['items'] if 'items' in response else response
+    return response.get('items', []) if isinstance(response, dict) else []

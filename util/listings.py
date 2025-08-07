@@ -6,7 +6,7 @@ import humanize
 from discord.ext.paginators.button_paginator import ButtonPaginator
 
 from util.iter import chunks
-from util.i18n import t, get_locale
+from util.i18n import t, get_locale, tr
 
 # These lists provide the internal keys for display options. The human readable
 # strings are stored in the locale JSON files and accessed via ``t``/``tr``.
@@ -108,7 +108,11 @@ def create_stock_embed(entries: List[str], locale: str):
     return embed
 
 
-async def display_listings_compact(interaction: discord.Interaction, alllistings: list):
+async def display_listings_compact(interaction: discord.Interaction, alllistings: list, empty_key: str = 'lookup.no_listings'):
+    if not alllistings:
+        await interaction.response.send_message(tr(interaction, empty_key))
+        return
+
     locale = get_locale(interaction)
     pages = []
     for listings in chunks(alllistings, 10):
@@ -126,6 +130,14 @@ async def display_listings_compact(interaction: discord.Interaction, alllistings
         entries.insert(0, header)
         pages.append(entries)
 
+    if not pages:
+        await interaction.response.send_message(tr(interaction, empty_key))
+        return
+
     embeds = [create_stock_embed(page, locale) for page in pages]
+    if not embeds:
+        await interaction.response.send_message(tr(interaction, empty_key))
+        return
+
     paginator = ButtonPaginator(embeds, author_id=interaction.user.id)
     await paginator.send(interaction)

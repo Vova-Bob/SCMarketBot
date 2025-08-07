@@ -214,6 +214,7 @@
   },
   "order": {
     "no_order": "No order in this channel. Please select an order to update.",
+    "backend_error": "Backend error: {error}",
     "success_specific": "Successfully updated the status to {status} for order '{title}'",
     "success": "Successfully updated status for the order",
     "status": {
@@ -245,6 +246,7 @@
   },
   "stock": {
     "no_listings": "No listings to display",
+    "backend_error": "Backend error: {error}",
     "stock_set": "Stock for {title} has been set from {old} to {new}.",
     "available": "available",
     "me": "Me"
