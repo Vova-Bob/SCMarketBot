@@ -80,7 +80,9 @@ class stock(commands.GroupCog):
             session=self.bot.session
         )
         if response.get("error"):
-            await interaction.response.send_message(response['error'])
+            await interaction.response.send_message(
+                tr(interaction, 'stock.backend_error', error=response['error'])
+            )
         else:
             newquantity = listing_payload['q']
             if action == "add":
@@ -113,7 +115,7 @@ class stock(commands.GroupCog):
             await interaction.response.send_message(tr(interaction, 'stock.no_listings'), ephemeral=True)
             return
 
-        await display_listings_compact(interaction, listings)
+        await display_listings_compact(interaction, listings, empty_key='stock.no_listings')
 
     @set_stock.autocomplete('listing')
     @add_stock.autocomplete('listing')

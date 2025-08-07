@@ -81,11 +81,13 @@ class Lookup(commands.Cog):
             params=params,
             session=self.bot.session,
         )
+        listings = result.get('listings', []) if isinstance(result, dict) else []
 
         locale = get_locale(interaction)
-        embeds = [create_market_embed(item, locale) for item in result['listings'] if item['listing']['quantity_available']]
+        embeds = [create_market_embed(item, locale) for item in listings if item['listing']['quantity_available']]
         if not embeds:
             await interaction.response.send_message(tr(interaction, 'search.no_results'))
+            return
 
         paginator = ButtonPaginator(embeds, author_id=interaction.user.id)
         await paginator.send(interaction)
@@ -105,13 +107,18 @@ class Lookup(commands.Cog):
             listings = await public_fetch(
                 f"/market/user/{handle}",
                 session=self.bot.session,
+                return_type=list,
             )
         except:
             await interaction.response.send_message(tr(interaction, 'lookup.invalid_user'))
             return
 
         if compact:
-            await display_listings_compact(interaction, [{**l['details'], **l['listing']} for l in listings])
+            await display_listings_compact(
+                interaction,
+                [{**l['details'], **l['listing']} for l in listings],
+                empty_key='lookup.no_listings',
+            )
         else:
             locale = get_locale(interaction)
             embeds = [create_market_embed_individual(item, locale) for item in listings if
@@ -137,13 +144,18 @@ class Lookup(commands.Cog):
             listings = await public_fetch(
                 f"/market/contractor/{spectrum_id}",
                 session=self.bot.session,
+                return_type=list,
             )
         except:
             await interaction.response.send_message(tr(interaction, 'lookup.invalid_org'))
             return
 
         if compact:
-            await display_listings_compact(interaction, [{**l['details'], **l['listing']} for l in listings])
+            await display_listings_compact(
+                interaction,
+                [{**l['details'], **l['listing']} for l in listings],
+                empty_key='lookup.no_org_listings',
+            )
         else:
             locale = get_locale(interaction)
             embeds = [create_market_embed_individual(item, locale) for item in listings if

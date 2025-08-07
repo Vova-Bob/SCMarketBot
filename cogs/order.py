@@ -69,7 +69,9 @@ class order(commands.GroupCog):
             )
 
         if response.get("error"):
-            await interaction.response.send_message(response['error'])
+            await interaction.response.send_message(
+                tr(interaction, 'order.backend_error', error=response['error'])
+            )
         else:
             if order:
                 status_localized = tr(
