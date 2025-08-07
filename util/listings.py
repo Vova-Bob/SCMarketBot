@@ -3,7 +3,8 @@ from typing import List
 
 import discord
 import humanize
-from discord.ext.paginators.button_paginator import ButtonPaginator
+
+from util.paginator import LocalizedPaginator
 
 from util.iter import chunks
 from util.i18n import t, get_locale, tr
@@ -37,11 +38,17 @@ sorting_methods = {
 sale_types = ["aggregate", "auction", "sale"]
 
 
+def _item_type_name(item_type: str, locale: str) -> str:
+    key = f"categories.{item_type.lower()}"
+    translated = t(key, locale)
+    return item_type if translated == key else translated
+
+
 def create_market_embed(listing: dict, locale: str):
     embed = discord.Embed(url=f"https://sc-market.space/market/{listing['listing_id']}", title=listing['title'])
     embed.add_field(
         name=t('fields.item_type', locale),
-        value=t(f"categories.{listing['item_type'].lower()}", locale),
+        value=_item_type_name(listing['item_type'], locale),
     )
     if listing["listing_type"] != "unique":
         embed.add_field(name=t('fields.minimum_price', locale), value=f"{int(listing['minimum_price']):,} aUEC")
@@ -73,7 +80,7 @@ def create_market_embed_individual(listing: dict, locale: str):
                           title=listing['details']['title'])
     embed.add_field(
         name=t('fields.item_type', locale),
-        value=t(f"categories.{listing['details']['item_type'].lower()}", locale),
+        value=_item_type_name(listing['details']['item_type'], locale),
     )
     embed.add_field(name=t('fields.price', locale), value=f"{int(listing['listing']['price']):,} aUEC")
     seller = listing['listing'].get('contractor_seller') or listing['listing'].get('user_seller')
@@ -139,5 +146,5 @@ async def display_listings_compact(interaction: discord.Interaction, alllistings
         await interaction.response.send_message(tr(interaction, empty_key))
         return
 
-    paginator = ButtonPaginator(embeds, author_id=interaction.user.id)
+    paginator = LocalizedPaginator(embeds, locale, author_id=interaction.user.id)
     await paginator.send(interaction)

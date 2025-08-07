@@ -274,7 +274,8 @@
     "flair": "Флейр",
     "addon": "Аддон",
     "consumable": "Витратник",
-    "other": "Інше"
+    "other": "Інше",
+    "quantum drive": "Квантовий двигун"
   },
   "sorting": {
     "title": "Назва",
@@ -291,6 +292,15 @@
     "aggregate": "Пакет",
     "auction": "Аукціон",
     "sale": "Продаж"
+  },
+  "paginator": {
+    "first": "Перша",
+    "left": "Ліва",
+    "page": "Сторінка {page} з {total}",
+    "right": "Права",
+    "last": "Остання",
+    "stop": "Зупинити",
+    "action_failed": "Дія не вдалася"
   },
   "views": {
     "select_status": "Виберіть статус...",

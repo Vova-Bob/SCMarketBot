@@ -3,7 +3,7 @@ from typing import List
 import discord
 from discord import app_commands
 from discord.ext import commands
-from discord.ext.paginators.button_paginator import ButtonPaginator
+from util.paginator import LocalizedPaginator
 
 from util.fetch import public_fetch, search_users, search_orgs
 from util.listings import create_market_embed, categories, sorting_methods, sale_types, create_market_embed_individual, \
@@ -89,7 +89,7 @@ class Lookup(commands.Cog):
             await interaction.response.send_message(tr(interaction, 'search.no_results'))
             return
 
-        paginator = ButtonPaginator(embeds, author_id=interaction.user.id)
+        paginator = LocalizedPaginator(embeds, locale, author_id=interaction.user.id)
         await paginator.send(interaction)
 
     lookup = app_commands.Group(**cmd('lookup'))
@@ -128,7 +128,7 @@ class Lookup(commands.Cog):
                 await interaction.response.send_message(tr(interaction, 'lookup.no_listings'))
                 return
 
-            paginator = ButtonPaginator(embeds, author_id=interaction.user.id)
+            paginator = LocalizedPaginator(embeds, locale, author_id=interaction.user.id)
             await paginator.send(interaction)
 
     @lookup.command(**cmd('lookup.org'))
@@ -165,7 +165,7 @@ class Lookup(commands.Cog):
                 await interaction.response.send_message(tr(interaction, 'lookup.no_org_listings'))
                 return
 
-            paginator = ButtonPaginator(embeds, author_id=interaction.user.id)
+            paginator = LocalizedPaginator(embeds, locale, author_id=interaction.user.id)
             await paginator.send(interaction)
 
     @user_search.autocomplete('handle')
