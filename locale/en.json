@@ -274,7 +274,8 @@
     "flair": "Flair",
     "addon": "Addon",
     "consumable": "Consumable",
-    "other": "Other"
+    "other": "Other",
+    "quantum drive": "Quantum Drive"
   },
   "sorting": {
     "title": "Title",
@@ -291,6 +292,15 @@
     "aggregate": "Aggregate",
     "auction": "Auction",
     "sale": "Sale"
+  },
+  "paginator": {
+    "first": "First",
+    "left": "Left",
+    "page": "Page {page} of {total}",
+    "right": "Right",
+    "last": "Last",
+    "stop": "Stop",
+    "action_failed": "Action failed"
   },
   "views": {
     "select_status": "Select status...",
