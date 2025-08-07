@@ -171,38 +171,39 @@ class SCMarket(Bot):
             seller_id = order.get('seller_discord_id')
             if not seller_id:
                 return False
+            locale = order.get('seller_locale', 'en')
             user = await self.fetch_user(int(seller_id))
             now = discord.utils.utcnow()
             buyer_name = order.get('buyer_name', '')
             embed = discord.Embed(
-                title=tr(user, 'order.embed.items_sold_to', buyer=buyer_name),
-                description=tr(user, 'order.embed.complete_delivery', buyer=buyer_name),
+                title=t('order.embed.items_sold_to', locale, buyer=buyer_name),
+                description=t('order.embed.complete_delivery', locale, buyer=buyer_name),
             )
             embed.add_field(
-                name=tr(user, 'order.embed.discord_user_details'),
+                name=t('order.embed.discord_user_details', locale),
                 value=order.get('buyer_tag', ''),
                 inline=False,
             )
             for item in order.get('items', []):
                 embed.add_field(
-                    name=tr(user, 'order.embed.item_field', item=item.get('name')),
-                    value=tr(user, 'order.embed.item_quantity', quantity=str(item.get('quantity', ''))),
+                    name=t('order.embed.item_field', locale, item=item.get('name')),
+                    value=t('order.embed.item_quantity', locale, quantity=str(item.get('quantity', ''))),
                     inline=False,
                 )
             if order.get('total') is not None:
-                embed.add_field(name=tr(user, 'order.embed.total'), value=str(order.get('total')), inline=True)
+                embed.add_field(name=t('order.embed.total', locale), value=str(order.get('total')), inline=True)
             if order.get('user_offer') is not None:
-                embed.add_field(name=tr(user, 'order.embed.user_offer'), value=str(order.get('user_offer')), inline=True)
+                embed.add_field(name=t('order.embed.user_offer', locale), value=str(order.get('user_offer')), inline=True)
             if order.get('note_from_buyer'):
-                embed.add_field(name=tr(user, 'order.embed.note_from_buyer'), value=order.get('note_from_buyer'), inline=False)
+                embed.add_field(name=t('order.embed.note_from_buyer', locale), value=order.get('note_from_buyer'), inline=False)
             if order.get('offer') is not None:
-                embed.add_field(name=tr(user, 'order.embed.offer'), value=str(order.get('offer')), inline=True)
+                embed.add_field(name=t('order.embed.offer', locale), value=str(order.get('offer')), inline=True)
             if order.get('kind'):
-                embed.add_field(name=tr(user, 'order.embed.kind'), value=str(order.get('kind')), inline=True)
+                embed.add_field(name=t('order.embed.kind', locale), value=str(order.get('kind')), inline=True)
             if order.get('collateral'):
-                embed.add_field(name=tr(user, 'order.embed.collateral'), value=str(order.get('collateral')), inline=True)
+                embed.add_field(name=t('order.embed.collateral', locale), value=str(order.get('collateral')), inline=True)
             embed.timestamp = now
-            embed.set_footer(text=tr(user, 'order.embed.today', time=now.strftime('%H:%M')))
+            embed.set_footer(text=t('order.embed.today', locale, time=now.strftime('%H:%M')))
             await user.send(embed=embed)
             return True
         except Exception:
@@ -275,7 +276,8 @@ class SCMarket(Bot):
         return Result(value=dict(thread_id=str(thread.id), failed=failed, invite_code=str(invite) if invite else None))
 
 
-bot = SCMarket(intents=intents, command_prefix="/")
-api = create_api(bot)
+if __name__ == "__main__":
+    bot = SCMarket(intents=intents, command_prefix="/")
+    api = create_api(bot)
 
-bot.run(os.environ.get("DISCORD_API_KEY"))
+    bot.run(os.environ.get("DISCORD_API_KEY"))
